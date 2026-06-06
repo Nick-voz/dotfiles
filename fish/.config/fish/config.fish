@@ -1,4 +1,4 @@
-source /usr/share/cachyos-fish-config/cachyos-config.fish
+source ~/.config/fish/cachyos-config.fish
 source ~/.config/.env
 
 fish_add_path ~/.config/dmenu-scripts
