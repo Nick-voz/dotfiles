@@ -1,0 +1,13 @@
+@theme "./theme.rasi"
+
+configuration {
+    font: "JetBrains Mono 18";
+    scroll-method: 1;
+    case-smart: true;
+    drun-show-actions: true;
+    combi-modes: "drun,run";
+    sorting-method: "fzf";
+    terminal: "kitty";
+    matching: "fuzzy";
+    drun-match-fields: "name";
+}

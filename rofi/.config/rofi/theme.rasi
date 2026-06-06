@@ -1,0 +1,45 @@
+* {
+    base: rgba (30, 30, 46, 50%);
+    text: rgb (205, 214, 244);
+    surface0: rgba (49, 50, 68, 100%);
+    surface1: rgba (69, 71, 90, 100%);
+    overlay0: rgba (108, 112, 134, 35%);
+    highlight: rgba (24, 24, 27, 100%);
+
+    defaultPadding: 0px 5px;
+    border-radius: 5px;
+    element-border-radius: 10px;
+
+    background-color: @base;
+    text-color:       @text;
+}
+
+window {
+    background-color: transparent;
+}
+
+element {
+    background-color: @surface0;
+    border-radius: @element-border-radius;
+}
+
+element-text {
+    background-color: inherit;
+    highlight: @highlight ;
+    padding: @defaultPadding;
+    border-radius: @element-border-radius;
+}
+
+element.selected {
+    background-color: @overlay0;
+}
+
+inputbar {
+    children: [entry];
+}
+
+entry {
+    hide-cursor-on-empty: true;
+    padding: @defaultPadding;
+    background-color: transparent;
+}

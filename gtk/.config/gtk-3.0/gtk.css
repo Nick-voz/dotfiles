@@ -1,0 +1,25 @@
+@binding-set MyBindings {
+  bind "<Alt>BackSpace" { "delete-from-cursor" (word-ends, -1) };
+  bind "<Alt>Delete" { "delete-from-cursor" (word-ends, 1) };
+  bind "<Alt>Right" { "move-cursor" (words, 1, 0) };
+  bind "<Alt>Left" { "move-cursor" (words, -1, 0) };
+
+  bind "<Alt>Up" { "move-cursor" (paragraphs, -1, 0) };
+  bind "<Alt>Down" { "move-cursor" (paragraphs, 1, 0) };
+
+  bind "Up" { "move-cursor" (display-lines, -1, 0) };
+  bind "Down" { "move-cursor" (display-lines, 1, 0) };
+  
+  bind "<Control>Up" { "move-cursor" (buffer-ends, -1, 0) };
+  bind "<Control>Down" { "move-cursor" (buffer-ends, 1, 0) };
+
+  bind "<Control>Left" { "move-cursor" (display-line-ends, -1, 0) };
+  bind "<Control>Right" { "move-cursor" (display-line-ends, 1, 0) };
+
+  bind "<Control>BackSpace" { "delete-from-cursor" (display-line-ends, -1) };
+  /* bind "<Control>Delete" { "delete-from-cursor" (display-line-ends, 1) }; */
+}
+
+entry, textview {
+  -gtk-key-bindings: MyBindings;
+}
