@@ -1,17 +1,22 @@
 source ~/.config/fish/cachyos-config.fish
 source ~/.config/.env
 
-fish_add_path ~/.config/dmenu-scripts
-fish_add_path ~/.config/dmenu-scripts/utils/
+if test -d ~/.config/dmenu-scripts
+    fish_add_path ~/.config/dmenu-scripts
+    fish_add_path ~/.config/dmenu-scripts/utils/
+end
 
 alias vim="nvim"
-alias zapret="$HOME/Desktop/zapret/service.sh"
 alias venv="source .venv/bin/activate.fish"
-alias scrot='scrot ~/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png'
-alias bookmarks="rofi -show bookmarks -modi 'bookmarks: firefox-bookmarks.py'"
-alias drun="rofi -show combi"
-alias power-menu="$HOME/.config/dmenu-scripts/power.sh"
 alias fdate='date +"%d.%m.%Y"'
+
+if test (uname) = Linux
+    alias zapret="$HOME/Desktop/zapret/service.sh"
+    alias scrot='scrot ~/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png'
+    alias bookmarks="rofi -show bookmarks -modi 'bookmarks: firefox-bookmarks.py'"
+    alias drun="rofi -show combi"
+    alias power-menu="$HOME/.config/dmenu-scripts/power.sh"
+end
 export MANPAGER="nvim +Man! -c 'set nospell'"
 export EDITOR=nvim
 export TERMINAL=kitty
@@ -69,21 +74,18 @@ function topdf
     pandoc $pandoc_args &
     set -l pid $last_pid
 
-    sh -c '
-    input_file=$1
-    output_file=$2
-    shift 2
+    set -l notify_cmd
+    if type -q notify-send
+        set notify_cmd 'notify-send -t 2500 "Pandoc" "Converting ..."; and pandoc "$@"; set code $status; if test $code -eq 0; notify-send -t 4000 "Pandoc" "Success: $output_file"; else; notify-send -t 4000 "Pandoc" "Error: $input_file ($code)"; end; exit $code'
+    else if type -q osascript
+        set notify_cmd "osascript -e 'display notification \"Converting ...\" with title \"Pandoc\"'; and pandoc \"\$@\"; set code \$status; if test \$code -eq 0; osascript -e 'display notification \"Success: \$output_file\" with title \"Pandoc\"'; else; osascript -e 'display notification \"Error: \$input_file (\$code)\" with title \"Pandoc\"'; end; exit \$code"
+    end
 
-    notify-send -t 2500 "Pandoc" "Converting ..."
-    pandoc "$@"
-    code=$?
-    if [ $code -eq 0 ]; then
-        notify-send -t 4000 "Pandoc" "Success: $output_file"
+    if set -q notify_cmd
+        sh -c "$notify_cmd" sh "$input_file" "$output_file" $pandoc_args >/dev/null 2>&1 &
     else
-        notify-send -t 4000 "Pandoc" "Error: $input_file ($code)"
-    fi
-    exit $code
-' sh "$input_file" "$output_file" $pandoc_args >/dev/null 2>&1 &
+        pandoc $pandoc_args &
+    end
 
     disown
 end
