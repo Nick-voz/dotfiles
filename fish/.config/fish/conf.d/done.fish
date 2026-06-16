@@ -24,6 +24,11 @@ if not status is-interactive
     exit
 end
 
+# macOS: lsappinfo is slow and terminal-notifier/osascript handles notifications anyway
+if test (uname) = Darwin
+    exit
+end
+
 set -g __done_version 1.19.1
 
 function __done_run_powershell_script
