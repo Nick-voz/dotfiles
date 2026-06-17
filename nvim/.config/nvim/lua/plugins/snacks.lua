@@ -11,8 +11,8 @@ return {
     },
     picker = {
       sources = {
-        explorer = { auto_close = true, layout = { preset = "default", preview = true }, hidden = true, ignored = true },
-        files = { hidden = true, ignored = true },
+        explorer = { auto_close = true, layout = { preset = "default", preview = true }, hidden = true, ignored = true, exclude = { ".DS_Store", "__pycache__" } },
+        files = { hidden = true, ignored = true, exclude = { ".DS_Store", "__pycache__", ".venv", ".git" } },
         keymaps = {
           layout = { preview = false },
           format = function(item)
