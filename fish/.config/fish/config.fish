@@ -26,6 +26,42 @@ function cdt
     cd $(tv dirs -s 'fd -t d --hidden')
 end
 
+function tf
+    tv files $argv
+end
+
+function tmv
+    set -l src (tv files)
+    if test -z "$src"
+        return 1
+    end
+    set -l dest (tv dirs)
+    if test -z "$dest"
+        return 1
+    end
+    mv -i $src $dest
+end
+
+function tcp
+    set -l src (tv files)
+    if test -z "$src"
+        return 1
+    end
+    set -l dest (tv dirs)
+    if test -z "$dest"
+        return 1
+    end
+    cp -ri $src $dest
+end
+
+function trm
+    set -l target (tv files)
+    if test -z "$target"
+        return 1
+    end
+    rm -r $target
+end
+
 function fp
     realpath $argv[1]
 end
