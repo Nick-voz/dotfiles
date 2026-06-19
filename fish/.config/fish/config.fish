@@ -22,7 +22,7 @@ export MANPAGER="nvim +Man! -c 'set nospell'"
 export EDITOR=nvim
 export TERMINAL=kitty
 
-function cdt
+function tcd
     cd $(tv dirs -s 'fd -t d --hidden')
 end
 
