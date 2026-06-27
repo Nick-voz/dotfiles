@@ -12,7 +12,7 @@ stow <package>
 
 This symlinks `./<package>/.config/<app>/...` → `~/.config/<app>/...`. Example: `stow nvim` links `nvim/.config/nvim/` → `~/.config/nvim/`.
 
-Packages: `awesome`, `bash`, `fish`, `fonts`, `greenclip`, `gtk`, `kitty`, `nvim`, `picom`, `rofi`, `tv`, `opencode`.
+Packages: `awesome`, `bash`, `fish`, `fonts`, `greenclip`, `gtk`, `karabiner`, `kitty`, `nvim`, `picom`, `rofi`, `tv`, `opencode`.
 
 ## Key facts
 
