@@ -99,7 +99,7 @@ function topdf
         -o "$output_file" \
         --from markdown \
         --template eisvogel \
-        --highlight-style pygments \
+        --syntax-highlighting pygments \
         --pdf-engine=xelatex \
         $extra_args
 
