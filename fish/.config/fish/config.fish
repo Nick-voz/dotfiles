@@ -88,8 +88,7 @@ function topdf
 
     set -l has_author 0
 
-    for i in (seq (count $extra_args))
-        set -l arg $extra_args[$i]
+    for arg in $extra_args
         if string match -rq '^author=' -- $arg
             set has_author 1
         end
