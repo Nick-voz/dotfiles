@@ -41,7 +41,7 @@ end
 theme.menu_height = dpi(25)
 theme.menu_width = dpi(200)
 
-theme.wallpaper = "~/.config/awesome/themes/wallpaper3.png"
+theme.wallpaper = "~/.config/awesome/themes/catppuccin-bg.png"
 
 theme.wibar_bg = theme.surface0
 theme.wibar_fg = theme.text
