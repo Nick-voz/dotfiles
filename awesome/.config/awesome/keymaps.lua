@@ -35,15 +35,6 @@ local function focus_specific_window(tag, i)
 end
 
 globalkeys = gears.table.join(
-	awful.key({ MODKEY, SHIFT }, "b", function()
-		for s in screen do
-			s.mywibox.visible = not s.mywibox.visible
-			if s.mybottomwibox then
-				s.mybottomwibox.visible = not s.mybottomwibox.visible
-			end
-		end
-	end, { description = "toggle wibox", group = "awesome" }),
-
 	awful.key({ MODKEY }, "s", function()
 		awful.spawn.with_shell("scrot")
 	end, { description = "Make screenshot" }),

@@ -43,9 +43,5 @@ theme.menu_width = dpi(200)
 
 theme.wallpaper = "~/.config/awesome/themes/catppuccin-bg.png"
 
-theme.wibar_bg = theme.surface0
-theme.wibar_fg = theme.text
-theme.bg_systray = theme.surface1
-theme.bg_widget = theme.surface1
 
 return theme
