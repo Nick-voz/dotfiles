@@ -107,21 +107,20 @@ function topdf
         set pandoc_args $pandoc_args -M author='Возисов Н.С.'
     end
 
-    pandoc $pandoc_args &
-    set -l pid $last_pid
-
-    set -l notify_cmd
-    if type -q notify-send
-        set notify_cmd 'notify-send -t 2500 "Pandoc" "Converting ..."; and pandoc "$@"; set code $status; if test $code -eq 0; notify-send -t 4000 "Pandoc" "Success: $output_file"; else; notify-send -t 4000 "Pandoc" "Error: $input_file ($code)"; end; exit $code'
-    else if type -q osascript
-        set notify_cmd "osascript -e 'display notification \"Converting ...\" with title \"Pandoc\"'; and pandoc \"\$@\"; set code \$status; if test \$code -eq 0; osascript -e 'display notification \"Success: \$output_file\" with title \"Pandoc\"'; else; osascript -e 'display notification \"Error: \$input_file (\$code)\" with title \"Pandoc\"'; end; exit \$code"
-    end
-
-    if set -q notify_cmd
-        sh -c "$notify_cmd" sh "$input_file" "$output_file" $pandoc_args >/dev/null 2>&1 &
-    else
-        pandoc $pandoc_args &
-    end
-
+    begin
+        if type -q notify-send
+            notify-send -t 2500 "Pandoc" "Converting ..."
+            and pandoc $pandoc_args
+            and notify-send -t 4000 "Pandoc" "Success: $output_file"
+            or notify-send -t 4000 "Pandoc" "Error: $input_file ($status)"
+        else if type -q osascript
+            osascript -e "display notification \"Converting ...\" with title \"Pandoc\""
+            and pandoc $pandoc_args
+            and osascript -e "display notification \"Success: $output_file\" with title \"Pandoc\""
+            or osascript -e "display notification \"Error: $input_file ($status)\" with title \"Pandoc\""
+        else
+            pandoc $pandoc_args
+        end
+    end </dev/null >/dev/null 2>&1 &
     disown
 end
