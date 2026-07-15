@@ -7,6 +7,10 @@ local wins = {
 		[3] = "eu.betterbird.Betterbird",
 		[4] = "zoom",
 	},
+	["6"] = {
+		[1] = "obsidian",
+		[2] = "Super Productivity",
+	},
 }
 
 local function focus_specific_window(tag, i)

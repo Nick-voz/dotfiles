@@ -55,7 +55,7 @@ awful.rules.rules = {
 	{ rule = { class = "steam" }, properties = { screen = 1, tag = "4" } },
 
 	{ rule = { name = "obsidian" }, properties = { screen = 1, tag = "6" } },
-	{ rule = { class = "superProductivity" }, properties = { screen = 1, tag = "6" } },
+	{ rule = { class = "Super Productivity" }, properties = { screen = 1, tag = "6" } },
 
 	{
 		rule_any = { class = { "libreoffice", "libreoffice-writer", "Soffice", "soffice" } },
