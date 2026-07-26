@@ -69,7 +69,14 @@ awful.rules.rules = {
 
 	{
 		rule_any = {
-			class = { "pulsemixer", "Nm-connection-editor", "Network Connections", "Nm-applet", "Blueman-manager" },
+			class = {
+				"pulsemixer",
+				"wlctl",
+				"Nm-connection-editor",
+				"Network Connections",
+				"Nm-applet",
+				"Blueman-manager",
+			},
 		},
 		properties = {
 			floating = true,

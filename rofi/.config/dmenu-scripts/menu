@@ -4,10 +4,10 @@ TERMINAL=kitty
 declare -A menu=(
   ["brightness"]="$HOME/.config/dmenu-scripts/brightness.sh"
   ["Clipboard"]="$HOME/.config/dmenu-scripts/clipboard.sh"
-  ["Wifi"]="networkmanager_dmenu"
   ["Edit config"]="$TERMINAL --class tv tv dirs-config"
   ["Web search"]="$HOME/.config/dmenu-scripts/web-search.sh"
   ["Volume control"]="$TERMINAL --class pulsemixer -e $HOME/Desktop/pulsemixer"
+  ["wifi"]="$TERMINAL --class wlctl -e wlctl"
   ["Edit obsidian"]="$TERMINAL --class tv tv files-obsidian"
 )
 
