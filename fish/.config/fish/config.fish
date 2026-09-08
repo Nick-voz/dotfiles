@@ -10,6 +10,7 @@ end
 alias vim="nvim"
 alias venv="source .venv/bin/activate.fish"
 alias fdate='date +"%d.%m.%Y"'
+alias update = "brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup"
 
 if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
