@@ -42,7 +42,7 @@
                         ]
                     },
                     {
-                        "description": "Swap control+space and command+space",
+                        "description": "Change control+space to command+space",
                         "manipulators": [
                             {
                                 "from": {
@@ -56,22 +56,6 @@
                                     {
                                         "key_code": "spacebar",
                                         "modifiers": ["command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "spacebar",
-                                    "modifiers": {
-                                        "mandatory": ["command"],
-                                        "optional": ["any"]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "spacebar",
-                                        "modifiers": ["control"]
                                     }
                                 ],
                                 "type": "basic"

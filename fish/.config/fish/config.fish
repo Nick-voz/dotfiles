@@ -10,7 +10,7 @@ end
 alias vim="nvim"
 alias venv="source .venv/bin/activate.fish"
 alias fdate='date +"%d.%m.%Y"'
-alias update = "brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup"
+alias update="brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup"
 
 if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
@@ -110,10 +110,10 @@ function topdf
 
     begin
         if type -q notify-send
-            notify-send -t 2500 "Pandoc" "Converting ..."
+            notify-send -t 2500 Pandoc "Converting ..."
             and pandoc $pandoc_args
-            and notify-send -t 4000 "Pandoc" "Success: $output_file"
-            or notify-send -t 4000 "Pandoc" "Error: $input_file ($status)"
+            and notify-send -t 4000 Pandoc "Success: $output_file"
+            or notify-send -t 4000 Pandoc "Error: $input_file ($status)"
         else if type -q osascript
             osascript -e "display notification \"Converting ...\" with title \"Pandoc\""
             and pandoc $pandoc_args
