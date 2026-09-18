@@ -14,7 +14,7 @@ alias update="brew update && brew upgrade && brew upgrade --cask --greedy && bre
 
 if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
-    alias scrot='scrot ~/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png'
+    alias scrot='scrot "$HOME/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png" -e '\''xclip -selection clipboard -t image/png -i "$f"'\'''
     alias bookmarks="rofi -show bookmarks -modi 'bookmarks: firefox-bookmarks.py'"
     alias drun="rofi -show combi"
     alias power-menu="$HOME/.config/dmenu-scripts/power.sh"
