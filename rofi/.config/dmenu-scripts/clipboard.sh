@@ -1,44 +1,46 @@
 #!/usr/bin/env bash
-TERMINAL="kitty -e"
-EDITOR="nvim"
 
 options="Search\nClear\nSwitch primary\nEdit"
 
-selection=$(echo -e "$options" | rofi -dmenu -i -p "Clipboard history")
+selection=$(printf '%b' "$options" | rofi -dmenu -i -p "Clipboard history")
 
 case "$selection" in
 "Search")
-  resp=$(greenclip print | rofi -dmenu -p "Search Clipboard")
-  if [ -n "$resp" ]; then
-    echo "$resp" | xclip -selection clipboard
-    xdotool type --delay 0 "$resp"
-  fi
+  rofi -modi "clipboard:greenclip print" \
+    -show clipboard \
+    -p "Search Clipboard"
   ;;
 
 "Clear")
   greenclip clear
   ;;
 
+"Switch primary")
+  rofi -modi "clipboard:greenclip print" \
+    -show clipboard
+  ;;
+
 "Edit")
-  original_content=$(greenclip print | rofi -dmenu -p "Select item to edit")
+  original_content=$(
+    greenclip print |
+      rofi -dmenu -p "Select item to edit"
+  )
 
   if [ -n "$original_content" ]; then
-    tmp_file="/tmp/clip_edit"
-    echo -n "$original_content" >"$tmp_file"
+    tmp_file=$(mktemp)
 
-    $TERMINAL $EDITOR $tmp_file
+    printf '%s' "$original_content" >"$tmp_file"
+
+    kitty -e nvim "$tmp_file"
 
     edited_content=$(cat "$tmp_file")
 
     if [ -n "$edited_content" ]; then
-      echo -n "$edited_content" | xclip -selection clipboard
+      printf '%s' "$edited_content" |
+        xclip -selection clipboard -in
     fi
 
-    rm "$tmp_file"
+    rm -f "$tmp_file"
   fi
-  ;;
-
-"Switch primary")
-  rofi -modi "clipboard:greenclip print" -show clipboard -run-command '{cmd}'
   ;;
 esac
