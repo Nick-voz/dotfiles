@@ -1,0 +1,45 @@
+
+keymap:
+  - name: Obsidian — gtk-like keybindings
+    exact_match: true
+    application:
+      only: ["/obsidian/"]
+    remap:
+      # selection — must come before plain move bindings (exact_match: first match wins)
+      Shift-Alt-Left: Ctrl-Shift-Left
+      Shift-Alt-Right: Ctrl-Shift-Right
+
+      # Alt+Shift+Up: select to start of line above (Up then Shift+Home)
+      Shift-Alt-Up: [Shift-Up, Shift-Home]
+      # Alt+Shift+Down: select to end of line below (Down then Shift+End)
+      Shift-Alt-Down: [Shift-Down, Shift-End]
+
+      Shift-Ctrl-Left: Shift-Home
+      Shift-Ctrl-Right: Shift-End
+
+      Shift-Ctrl-Up: Ctrl-Shift-Home
+      Shift-Ctrl-Down: Ctrl-Shift-End
+
+      # move by word (Alt+Left/Right like GTK)
+      Alt-Left: Ctrl-Left
+      Alt-Right: Ctrl-Right
+
+      # Alt+Up: go to start of line above (Up then Home)
+      Alt-Up: [Up, Home]
+      # Alt+Down: go to end of line below (Down then End)
+      Alt-Down: [Down, End]
+
+      # move to line start/end (Ctrl+Left/Right like GTK)
+      Ctrl-Left: Home
+      Ctrl-Right: End
+
+      # move to buffer start/end (Ctrl+Up/Down like GTK)
+      Ctrl-Up: Ctrl-Home
+      Ctrl-Down: Ctrl-End
+
+      # delete word backward / forward (Alt+Backspace / Alt+Delete like GTK)
+      Alt-BackSpace: Ctrl-BackSpace
+      Alt-Delete: Ctrl-Delete
+
+      # delete to line start (Ctrl+Backspace like GTK) — sequence as list
+      Ctrl-BackSpace: [Shift-Home, BackSpace]
