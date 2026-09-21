@@ -1,4 +1,3 @@
-
 keymap:
   - name: Obsidian — gtk-like keybindings
     exact_match: true
@@ -43,3 +42,19 @@ keymap:
 
       # delete to line start (Ctrl+Backspace like GTK) — sequence as list
       Ctrl-BackSpace: [Shift-Home, BackSpace]
+
+  - name: Win+C/V → Ctrl+C/V (all apps except kitty)
+    exact_match: true
+    application:
+      not: [kitty]
+    remap:
+      Super-c: Ctrl-c
+      Super-v: Ctrl-v
+
+  - name: Disable Ctrl+C/V copy-paste (all apps except kitty)
+    exact_match: true
+    application:
+      not: [kitty]
+    remap:
+      Ctrl-c: []
+      Ctrl-v: []
