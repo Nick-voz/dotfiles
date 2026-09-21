@@ -46,7 +46,7 @@ keymap:
   - name: Win+C/V → Ctrl+C/V (all apps except kitty)
     exact_match: true
     application:
-      not: [kitty]
+      not: [/kitty/]
     remap:
       Super-c: Ctrl-c
       Super-v: Ctrl-v
@@ -54,7 +54,7 @@ keymap:
   - name: Disable Ctrl+C/V copy-paste (all apps except kitty)
     exact_match: true
     application:
-      not: [kitty]
+      not: [/kitty/]
     remap:
       Ctrl-c: []
       Ctrl-v: []
