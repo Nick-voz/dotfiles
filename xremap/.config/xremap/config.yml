@@ -50,18 +50,26 @@ keymap:
     remap:
       Ctrl-BackSpace: [Shift-Home, BackSpace]
 
-  - name: Win+C/V → Ctrl+C/V (all apps except kitty)
+  - name: Win+C/V/X/Z → Ctrl+C/V/X/Z (all apps except kitty)
     exact_match: true
     application:
       not: [/kitty/]
     remap:
       Super-c: Ctrl-c
       Super-v: Ctrl-v
+      Super-x: Ctrl-x
+      Super-z: Ctrl-z
+      Super-a: Ctrl-a
+      Shift-Super-z: Ctrl-Shift-z
 
-  - name: Disable Ctrl+C/V copy-paste (all apps except kitty)
+  - name: Disable Ctrl+C/V/X/Z copy-paste/cut/undo (all apps except kitty)
     exact_match: true
     application:
       not: [/kitty/]
     remap:
       Ctrl-c: []
       Ctrl-v: []
+      Ctrl-x: []
+      Ctrl-z: []
+      Ctrl-a: []
+      Ctrl-Shift-z: []
