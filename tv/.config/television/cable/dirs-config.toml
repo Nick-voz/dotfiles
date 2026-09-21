@@ -4,9 +4,7 @@ description = "A channel to select from config directories"
 requirements = ["fd"]
 
 [source]
-command = [
-  "find $HOME/.config $HOME/.bashrc $HOME/.zshrc $HOME/.Xresources -maxdepth 1 2>/dev/null",
-]
+command = "fd -t d --max-depth 4 . $HOME/.config $HOME/dotfiles"
 
 [preview]
 command = "ls -la --color=always '{}'"
@@ -16,6 +14,7 @@ shortcut = "f2"
 enter = "actions:open"
 
 [actions.open]
-description = "Open selected config with editor"
-command = "nohup $TERMINAL $EDITOR '{}' >/dev/null 2>&1 & exit"
+description = "Copy selected path to clipboard"
+command = "printf '%s' '{}' | xsel --clipboard --input"
+shell = "bash"
 mode = "execute"
