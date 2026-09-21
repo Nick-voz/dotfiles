@@ -43,6 +43,13 @@ keymap:
       # delete to line start (Ctrl+Backspace like GTK) — sequence as list
       Ctrl-BackSpace: [Shift-Home, BackSpace]
 
+  - name: Ctrl+Backspace — delete to line start, or newline if at BOL (all apps except kitty)
+    exact_match: true
+    application:
+      not: [/kitty/, /obsidian/]
+    remap:
+      Ctrl-BackSpace: [Shift-Home, BackSpace]
+
   - name: Win+C/V → Ctrl+C/V (all apps except kitty)
     exact_match: true
     application:
