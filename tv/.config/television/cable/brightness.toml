@@ -1,0 +1,33 @@
+[metadata]
+name = "brightness"
+description = "Set monitor brightness via ddcutil"
+requirements = ["ddcutil"]
+
+[source]
+command = "printf '%s\\n' '0%' '25%' '50%' '75%' '100%' 'Custom'"
+no_sort = true
+frecency = false
+
+[keybindings]
+enter = "actions:set"
+
+[ui.preview_panel]
+hidden = true
+
+[actions.set]
+description = "Set monitor brightness"
+command = '''
+LEVEL='{}'
+if [[ "$LEVEL" == "Custom" ]]; then
+  printf 'Enter Brightness (0-100): '
+  read -r LEVEL || exit 0
+fi
+LEVEL="${LEVEL%\%}"
+if [[ "$LEVEL" =~ ^[0-9]+$ ]] && (( LEVEL <= 100 )); then
+  (trap '' HUP; setsid ddcutil setvcp 10 "$LEVEL" --display "${MONITOR:-1}" --noverify </dev/null >/dev/null 2>&1 &)
+else
+  echo "Invalid brightness: $LEVEL (expected 0-100)"
+fi
+'''
+shell = "bash"
+mode = "execute"

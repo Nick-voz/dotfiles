@@ -2,7 +2,7 @@
 TERMINAL=kitty
 
 declare -A menu=(
-  ["brightness"]="$HOME/.config/dmenu-scripts/brightness.sh"
+  ["brightness"]="$TERMINAL --class tv tv brightness"
   ["Clipboard"]="$HOME/.config/dmenu-scripts/clipboard.sh"
   ["Edit config"]="$TERMINAL --class tv tv dirs-config && $TERMINAL $EDITOR \"\$(xclip -selection secondary -out)\""
   ["Edit obsidian"]="$TERMINAL --class tv tv files-obsidian && $TERMINAL $EDITOR \"\$(xclip -selection secondary -out)\""
