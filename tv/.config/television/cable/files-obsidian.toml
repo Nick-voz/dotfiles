@@ -16,6 +16,6 @@ enter = "actions:open"
 
 [actions.open]
 description = "Copy selected path to clipboard"
-command = "printf '%s' '{}' | xsel --clipboard --input"
+command = "printf '%s' '{}' | xsel --secondary --input"
 shell = "bash"
 mode = "execute"
