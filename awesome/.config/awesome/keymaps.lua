@@ -68,7 +68,7 @@ globalkeys = gears.table.join(
 	awful.key({ MODKEY, SHIFT }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
 
 	awful.key({ MODKEY }, "space", function()
-		awful.spawn("menu")
+		awful.spawn(TERMINAL .. " --class tv tv menu")
 	end),
 	awful.key({ MODKEY }, "b", function()
 		awful.spawn.with_shell("bookmarks")

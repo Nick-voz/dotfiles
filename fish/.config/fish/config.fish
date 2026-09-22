@@ -18,6 +18,7 @@ if test (uname) = Linux
     alias bookmarks="rofi -show bookmarks -modi 'bookmarks: firefox-bookmarks.py'"
     alias drun="rofi -show combi"
     alias power-menu="$TERMINAL --class tv tv power"
+    alias menu="tv menu"
 end
 export MANPAGER="nvim +Man! -c 'set nospell'"
 export EDITOR=nvim

@@ -1,0 +1,49 @@
+[metadata]
+name = "menu"
+description = "Main menu: brightness, clipboard, edit config/obsidian, web search, volume, wifi"
+requirements = ["tv", "kitty", "xclip", "xsel"]
+
+[source]
+command = "printf '%s\\n' 'brightness' 'Clipboard' 'Edit config' 'Edit obsidian' 'Web search' 'Volume control' 'wifi'"
+no_sort = true
+frecency = false
+
+[preview]
+command = '''
+case '{}' in
+  brightness) echo "Set monitor brightness (tv brightness, ddcutil)" ;;
+  Clipboard) echo "Clipboard history (greenclip + rofi)" ;;
+  "Edit config") echo "Pick a config dir (tv dirs-config), then open it in a new terminal" ;;
+  "Edit obsidian") echo "Pick a note (tv files-obsidian), then open it in a new terminal" ;;
+  "Web search") echo "Pick a search engine, enter a query, open it in firefox" ;;
+  "Volume control") echo "PulseAudio mixer TUI (pulsemixer)" ;;
+  wifi) echo "WiFi manager TUI (wlctl)" ;;
+esac
+'''
+shell = "bash"
+
+[keybindings]
+enter = "actions:run"
+
+[actions.run]
+description = "Run the selected menu entry"
+command = '''
+case '{}' in
+  brightness)
+    (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv tv brightness </dev/null >/dev/null 2>&1 &) ;;
+  Clipboard)
+    (trap '' HUP; setsid "$HOME/.config/dmenu-scripts/clipboard.sh" </dev/null >/dev/null 2>&1 &) ;;
+  "Edit config")
+    (trap '' HUP; setsid bash -c '${TERMINAL:-kitty} --class tv tv dirs-config && ${TERMINAL:-kitty} ${EDITOR:-nvim} "$(xclip -selection secondary -out)"' </dev/null >/dev/null 2>&1 &) ;;
+  "Edit obsidian")
+    (trap '' HUP; setsid bash -c '${TERMINAL:-kitty} --class tv tv files-obsidian && ${TERMINAL:-kitty} ${EDITOR:-nvim} "$(xclip -selection secondary -out)"' </dev/null >/dev/null 2>&1 &) ;;
+  "Web search")
+    (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv -e "$HOME/.config/dmenu-scripts/web-search.sh" </dev/null >/dev/null 2>&1 &) ;;
+  "Volume control")
+    (trap '' HUP; setsid ${TERMINAL:-kitty} --class pulsemixer -e "$HOME/Desktop/pulsemixer" </dev/null >/dev/null 2>&1 &) ;;
+  wifi)
+    (trap '' HUP; setsid ${TERMINAL:-kitty} --class wlctl -e wlctl </dev/null >/dev/null 2>&1 &) ;;
+esac
+'''
+shell = "bash"
+mode = "execute"
