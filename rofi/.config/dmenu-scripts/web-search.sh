@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BROWSER="firefox --new-tab "
-MENU="rofi -dmenu -i"
 
+# NOTE: engine names must match tv/.config/television/cable/web-search.toml source
 declare -A websearch=(
   # [bing]="https://www.bing.com/search?q="
   # [brave]="https://search.brave.com/search?q="
@@ -24,18 +23,21 @@ declare -A websearch=(
   [archaur]="https://aur.archlinux.org/packages/?O=0&K="
 )
 
-# URL encode function
+# URL encode function (byte-wise, UTF-8 safe)
 urlencode() {
   local str="$1"
-  local length="${#str}"
-  local i char out=""
+  local i char hex out=""
 
-  for (( i=0; i<length; i++ )); do
+  for (( i=0; i<${#str}; i++ )); do
     char="${str:i:1}"
     case "$char" in
       [a-zA-Z0-9.~_-]) out+="$char" ;;
       ' ') out+="+" ;;
-      *) printf -v hex '%%%02X' "'$char"; out+="$hex" ;;
+      *)
+        # %XX for every byte of the char (handles multibyte UTF-8)
+        hex="$(printf '%s' "$char" | od -An -tx1 | tr -d ' \n' | sed 's/../%&/g')"
+        out+="$hex"
+        ;;
     esac
   done
 
@@ -44,23 +46,39 @@ urlencode() {
 
 main() {
   local engine query encoded url
+  local log="/tmp/web-search.log"
 
-  engine=$(
-    printf '%s\n' "${!websearch[@]}" | sort | $MENU -p "Choose search engine"
-  ) || exit 0
+  # engine is picked in tv, passed back via secondary selection (like Edit config flow).
+  # Runs inside kitty (see menu), so the query is read from the terminal, not rofi.
+  printf '' | xsel --secondary --input
+  tv web-search || exit 0
 
-  [ -n "$engine" ] || exit 1
+  engine="$(xclip -selection secondary -out)" || exit 0
 
-  query=$(
-    printf '' | $MENU -p "Enter search query"
-  ) || exit 0
+  [ -n "$engine" ] || exit 0
+  if [ -z "${websearch[$engine]:-}" ]; then
+    printf 'Unknown engine: %s\nPress Enter to close...' "$engine"
+    read -r _ || true
+    exit 1
+  fi
+
+  printf 'Enter search query: '
+  read -r query || exit 0
 
   [ -n "$query" ] || exit 0
 
   encoded="$(urlencode "$query")"
   url="${websearch[$engine]}${encoded}"
 
-  $BROWSER $url 2>/dev/null &
+  printf 'Opening [%s]: %s\n' "$engine" "$url"
+  if firefox --new-tab "$url" >>"$log" 2>&1 & then
+    # brief confirmation so a slow browser start isn't mistaken for failure
+    sleep 1
+  else
+    printf 'Failed to launch firefox (see %s). Press Enter to close...' "$log"
+    read -r _ || true
+    exit 1
+  fi
 }
 
 main "$@"

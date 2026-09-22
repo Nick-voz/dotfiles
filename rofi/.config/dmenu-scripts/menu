@@ -6,7 +6,7 @@ declare -A menu=(
   ["Clipboard"]="$HOME/.config/dmenu-scripts/clipboard.sh"
   ["Edit config"]="$TERMINAL --class tv tv dirs-config && $TERMINAL $EDITOR \"\$(xclip -selection secondary -out)\""
   ["Edit obsidian"]="$TERMINAL --class tv tv files-obsidian && $TERMINAL $EDITOR \"\$(xclip -selection secondary -out)\""
-  ["Web search"]="$HOME/.config/dmenu-scripts/web-search.sh"
+  ["Web search"]="$TERMINAL --class tv -e $HOME/.config/dmenu-scripts/web-search.sh"
   ["Volume control"]="$TERMINAL --class pulsemixer -e $HOME/Desktop/pulsemixer"
   ["wifi"]="$TERMINAL --class wlctl -e wlctl"
 )

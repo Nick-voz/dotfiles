@@ -1,0 +1,28 @@
+[metadata]
+name = "power"
+description = "Power menu: shutdown, reboot, suspend, logout"
+requirements = ["systemctl"]
+
+[source]
+command = "printf '%s\\n' 'Shutdown' 'Reboot' 'Sleep' 'Logout'"
+no_sort = true
+frecency = false
+
+[keybindings]
+enter = "actions:run"
+
+[ui.preview_panel]
+hidden = true
+
+[actions.run]
+description = "Run selected power action"
+command = '''
+case '{}' in
+  Shutdown) systemctl poweroff ;;
+  Reboot) systemctl reboot ;;
+  Sleep) systemctl suspend ;;
+  Logout) awesome-client 'awesome.quit()' ;;
+esac
+'''
+shell = "bash"
+mode = "execute"

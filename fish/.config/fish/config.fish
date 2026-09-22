@@ -17,7 +17,7 @@ if test (uname) = Linux
     alias scrot='scrot "$HOME/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png" -e '\''xclip -selection clipboard -t image/png -i "$f"'\'''
     alias bookmarks="rofi -show bookmarks -modi 'bookmarks: firefox-bookmarks.py'"
     alias drun="rofi -show combi"
-    alias power-menu="$HOME/.config/dmenu-scripts/power.sh"
+    alias power-menu="$TERMINAL --class tv tv power"
 end
 export MANPAGER="nvim +Man! -c 'set nospell'"
 export EDITOR=nvim

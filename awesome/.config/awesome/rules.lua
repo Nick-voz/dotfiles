@@ -92,7 +92,7 @@ awful.rules.rules = {
 	},
 	{ rule = { class = "Soffice" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Xdg-desktop-portal-gtk" }, properties = { floating = true }, callback = resize },
-	{ rule = { class = "tv" }, properties = { floating = true }, callback = resize },
+	{ rule = { class = "tv" }, properties = { floating = true, focus = true }, callback = resize },
 	{ rule = { class = "Throne", name = "Confirmation" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Throne", name = "url detected" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Throne", name = "Edit" }, properties = { floating = true }, callback = resize },

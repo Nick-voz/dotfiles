@@ -1,0 +1,21 @@
+[metadata]
+name = "web-search"
+description = "Choose a search engine (query is asked next in terminal)"
+requirements = ["xsel"]
+
+[source]
+command = "printf '%s\\n' 'google' 'yandex' 'youtube' 'github' 'reddit' 'stackoverflow' 'gitlab' 'archwiki' 'archaur'"
+no_sort = true
+frecency = false
+
+[keybindings]
+enter = "actions:pick"
+
+[ui.preview_panel]
+hidden = true
+
+[actions.pick]
+description = "Copy engine name to secondary selection"
+command = "printf '%s' '{}' | xsel --secondary --input"
+shell = "bash"
+mode = "execute"
