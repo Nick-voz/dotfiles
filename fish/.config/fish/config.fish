@@ -19,6 +19,7 @@ if test (uname) = Linux
     alias drun="rofi -show combi"
     alias power-menu="$TERMINAL --class tv tv power"
     alias menu="tv menu"
+    alias update="sudo pacman -Syu"
 end
 export MANPAGER="nvim +Man! -c 'set nospell'"
 export EDITOR=nvim
