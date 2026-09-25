@@ -2,7 +2,7 @@ keymap:
   - name: Obsidian — gtk-like keybindings
     exact_match: true
     application:
-      only: ["/obsidian/"]
+      only: ["/obsidian/", "/superproductivity/"]
     remap:
       # selection — must come before plain move bindings (exact_match: first match wins)
       Shift-Alt-Left: Ctrl-Shift-Left
