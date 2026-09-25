@@ -6,18 +6,11 @@
 
   bind "<Alt>Right" { "move-cursor" (words, 1, 0) };
   bind "<Alt>Left" { "move-cursor" (words, -1, 0) };
-  /* Alt+Up: go to start of line above (Up then Home) */
-  bind "<Alt>Up" { "move-cursor" (display-lines, -1, 0)
-                   "move-cursor" (display-line-ends, -1, 0) };
-  /* Alt+Down: go to end of line below (Down then End) */
-  bind "<Alt>Down" { "move-cursor" (display-lines, 1, 0)
-                     "move-cursor" (display-line-ends, 1, 0) };
+  bind "<Alt>Up" { "move-cursor" (display-lines, -1, 0) "move-cursor" (display-line-ends, -1, 0) };
+  bind "<Alt>Down" { "move-cursor" (display-lines, 1, 0) "move-cursor" (display-line-ends, 1, 0) };
+  bind "<Shift><Alt>Up" { "move-cursor" (display-lines, -1, 1) "move-cursor" (display-line-ends, -1, 1) };
+  bind "<Shift><Alt>Down" { "move-cursor" (display-lines, 1, 1) "move-cursor" (display-line-ends, 1, 1) };
 
-  /* Alt+Shift+Up/Down: same with selection */
-  bind "<Shift><Alt>Up" { "move-cursor" (display-lines, -1, 1)
-                          "move-cursor" (display-line-ends, -1, 1) };
-  bind "<Shift><Alt>Down" { "move-cursor" (display-lines, 1, 1)
-                            "move-cursor" (display-line-ends, 1, 1) };
 
   bind "<Control>Up" { "move-cursor" (buffer-ends, -1, 0) };
   bind "<Control>Down" { "move-cursor" (buffer-ends, 1, 0) };
