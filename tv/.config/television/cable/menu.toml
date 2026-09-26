@@ -1,10 +1,10 @@
 [metadata]
 name = "menu"
-description = "Main menu: brightness, clipboard, edit config/obsidian, web search, volume, wifi"
-requirements = ["tv", "kitty", "xclip", "xsel"]
+description = "Main menu: brightness, clipboard, edit text, edit config/obsidian, web search, volume, wifi"
+requirements = ["tv", "kitty", "xclip", "xsel", "clipcatctl"]
 
 [source]
-command = "printf '%s\\n' 'brightness' 'Clipboard' 'Edit config' 'Edit obsidian' 'Web search' 'Volume control' 'wifi'"
+command = "printf '%s\\n' 'brightness' 'Clipboard' 'Edit text' 'Edit config' 'Edit obsidian' 'Web search' 'Volume control' 'wifi'"
 no_sort = true
 frecency = false
 
@@ -13,6 +13,7 @@ command = '''
 case '{}' in
   brightness) echo "Set monitor brightness (tv brightness, ddcutil)" ;;
   Clipboard) echo "Clipboard history (clipcat via tv clipboard)" ;;
+  "Edit text") echo "New note: insert a blank clip, edit it in \$EDITOR, keep it in history (clipcatctl insert + edit)" ;;
   "Edit config") echo "Pick a config dir (tv dirs-config), then open it in a new terminal" ;;
   "Edit obsidian") echo "Pick a note (tv files-obsidian), then open it in a new terminal" ;;
   "Web search") echo "Pick a search engine, enter a query, open it in firefox" ;;
@@ -33,6 +34,8 @@ case '{}' in
     (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv tv brightness </dev/null >/dev/null 2>&1 &) ;;
   Clipboard)
     (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv tv clipboard </dev/null >/dev/null 2>&1 &) ;;
+  "Edit text")
+    (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv -e bash -c 'before=$(clipcatctl list 2>/dev/null | cut -d: -f1); clipcatctl insert "" >/dev/null 2>&1; id=$(clipcatctl list 2>/dev/null | cut -d: -f1 | grep -vxF -f <(printf "%s\\n" "$before") | head -1); [ -z "$id" ] && id=$(clipcatctl list 2>/dev/null | head -1 | cut -d: -f1); [ -n "$id" ] && exec clipcatctl edit --editor "${EDITOR:-nvim}" "$id"' </dev/null >/dev/null 2>&1 &) ;;
   "Edit config")
     (trap '' HUP; setsid bash -c '${TERMINAL:-kitty} --class tv tv dirs-config && ${TERMINAL:-kitty} ${EDITOR:-nvim} "$(xclip -selection secondary -out)"' </dev/null >/dev/null 2>&1 &) ;;
   "Edit obsidian")
