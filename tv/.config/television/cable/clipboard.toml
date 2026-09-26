@@ -1,0 +1,36 @@
+[metadata]
+name = "clipboard"
+description = "Clipboard history via clipcatctl: promote, remove, edit"
+requirements = ["clipcatctl"]
+
+[source]
+command = "clipcatctl list 2>/dev/null"
+display = "{split:\\::1}"
+output = "{split:\\::0}"
+no_sort = true
+frecency = false
+
+[ui.preview_panel]
+hidden = true
+
+[keybindings]
+enter = "actions:promote"
+ctrl-d = ["actions:remove", "reload_source"]
+ctrl-e = ["actions:edit", "reload_source"]
+
+
+[actions.promote]
+description = "Copy entry back to clipboard (clipcatctl promote) and exit"
+command = "clipcatctl promote '{split:\\::0}'"
+mode = "execute"
+
+[actions.remove]
+description = "Delete entry from history (clipcatctl remove)"
+command = "clipcatctl remove '{split:\\::0}'"
+mode = "fork"
+
+[actions.edit]
+description = "Edit entry text in $EDITOR, writes back via clipcatctl edit"
+command = "clipcatctl edit '{split:\\::0}'"
+shell = "bash"
+mode = "execute"

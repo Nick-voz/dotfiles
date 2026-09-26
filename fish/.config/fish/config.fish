@@ -14,7 +14,7 @@ alias update="brew update && brew upgrade && brew upgrade --cask --greedy && bre
 
 if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
-    alias scrot='scrot "$HOME/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png" -e '\''xclip -selection clipboard -t image/png -i "$f"'\'''
+    alias scrot='scrot "$HOME/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png" -e '\''clipcatctl load -k clipboard -m image/png -f "$f"'\'''
     alias drun="rofi -show combi"
     alias power-menu="$TERMINAL --class tv tv power"
     alias menu="tv menu"
