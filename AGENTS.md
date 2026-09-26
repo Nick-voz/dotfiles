@@ -30,3 +30,5 @@ Packages: `awesome`, `bash`, `clipcat`, `fish`, `fonts`, `gtk`, `kitty`, `nvim`,
 ## Development
 
 Nothing to build, test, lint, or format. Changes are applied by re-running `stow <package>` or by symlinking manually. To preview file changes before commit, use `git diff`.
+
+Systemd units live in the `systemd` package, but enablement state (`*.target.wants/`) is machine-local and gitignored. After `stow systemd`, enable explicitly: `systemctl --user daemon-reload && systemctl --user enable --now clipcat.service`. Note: stow folds a package dir into one symlink when the target path is new — if `~/.config/systemd/user` ever becomes a single symlink into the repo, `systemctl enable` will write absolute symlinks into the repo; fix by `stow -D systemd`, `mkdir -p ~/.config/systemd/user`, `stow systemd` (per-file symlinks), then enable again.

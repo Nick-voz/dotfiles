@@ -1,1 +1,3 @@
 .DS_Store
+# systemd enablement state (created by `systemctl enable`, machine-local)
+*.target.wants/
