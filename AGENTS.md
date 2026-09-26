@@ -20,7 +20,7 @@ Packages: `awesome`, `bash`, `fish`, `fonts`, `greenclip`, `gtk`, `kitty`, `nvim
 - **WM**: AwesomeWM with Catppuccin Mocha theme, `Mod4` as primary key, autostarts picom/nm-applet/blueman/steam/Telegram/discord/betterbird/greenclip/firefox.
 - **Terminal**: kitty (hardcoded in awesome and fish configs).
 - **Editor**: nvim (LazyVim) with extras: mini-surround, mini-move, json, markdown, python, toml. Stylua format: spaces, indent 2, width 120.
-- **Launcher**: rofi with custom dmenu scripts (brightness, clipboard, power-menu, web-search, firefox-bookmarks) and networkmanager-dmenu.
+- **Launcher**: rofi with custom dmenu scripts (brightness, clipboard, power-menu, web-search) and networkmanager-dmenu. Firefox bookmarks moved to `tv bookmarks` (foxmarks + xdg-open), launched from `tv menu`.
 - **TV**: television terminal viewer with extensive channel configs under `tv/.config/television/cable/`.
 - **Pandoc**: Eisvogel template files under `pandoc/.local/share/pandoc/templates/` — symlinked to `~/.local/share/pandoc/templates/` (not `.config`).
 - **Secrets**: `~/.config/.env` is sourced by bash and fish but **not tracked** in repo. Also `~/.fish_profile` is expected but not tracked.

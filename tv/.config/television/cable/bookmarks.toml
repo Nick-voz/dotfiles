@@ -1,0 +1,21 @@
+[metadata]
+name = "bookmarks"
+description = "Firefox bookmarks via foxmarks, open with xdg-open"
+requirements = ["foxmarks", "xdg-open"]
+
+[source]
+command = "foxmarks --column-delimiter '\\t'  bookmarks 2>/dev/null || foxmarks --column-delimiter '\\t' bookmarks 2>/dev/null"
+display = "{split:\t:0}"
+output = "{split:\t:1}"
+
+[preview]
+command = "printf 'Title: %s\\nURL: %s\\n' '{split:\t:0}' '{split:\t:1}'"
+shell = "bash"
+
+[keybindings]
+enter = "actions:open"
+
+[actions.open]
+description = "Open bookmark with default browser"
+command = " open '{split:\t:1}'"
+mode = "execute"
