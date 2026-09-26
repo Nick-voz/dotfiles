@@ -38,3 +38,10 @@ vim.keymap.set("v", "<A-Up>", ":m '<-2<CR>==gv", { silent = true, desc = "Move s
 vim.keymap.set("v", "<A-Down>", ":m '>+1<CR>==gv", { silent = true, desc = "Move selection down" })
 
 vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "Open neogit" })
+local opts = { noremap = true, silent = true }
+vim.keymap.set("i", "<C-BS>", "<C-w>", opts)
+vim.keymap.set("i", "<M-BS>", "<C-w>", opts)
+vim.keymap.set("i", "<C-a>", "<Home>", opts)
+vim.keymap.set("i", "<C-e>", "<End>", opts)
+vim.keymap.set("i", "<M-Left>", "<C-o>b", opts)
+vim.keymap.set("i", "<M-Right>", "<C-o>w", opts)

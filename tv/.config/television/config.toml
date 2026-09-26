@@ -16,7 +16,7 @@
 # General settings
 # ----------------------------------------------------------------------------
 tick_rate = 50
-default_channel = "files"
+default_channel = "channels"
 # Shell settings
 # --------------
 # Default shell used for executing commands (source, preview, actions).
@@ -168,15 +168,13 @@ ctrl-l = "toggle_layout"
 # Input field actions
 # ----------------------------------------
 backspace = "delete_prev_char"
-ctrl-w = "delete_prev_word"
-ctrl-u = "delete_line"
+alt-w = "delete_prev_word"
+alt-u = "delete_line"
 delete = "delete_next_char"
 left = "go_to_prev_char"
 right = "go_to_next_char"
 home = "go_to_input_start"
-ctrl-a = "go_to_input_start"
 end = "go_to_input_end"
-ctrl-e = "go_to_input_end"
 
 # Shell integration
 # ----------------------------------------------------------------------------

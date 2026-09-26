@@ -1,4 +1,14 @@
 keymap:
+  - name: TV — word/line ops via alt keys
+    exact_match: true
+    application:
+      only: tv.tv
+    remap:
+      Alt-BackSpace: Alt-w
+      Ctrl-BackSpace: Alt-u
+      Ctrl-Left: Home
+      Ctrl-Right: End
+
   - name: Obsidian — gtk-like keybindings
     exact_match: true
     application:
