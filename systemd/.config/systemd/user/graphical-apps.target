@@ -1,0 +1,4 @@
+[Unit]
+Description=Graphical apps (started after WM init from rc.lua)
+Requires=graphical-session.target
+After=graphical-session.target

@@ -2,6 +2,7 @@
 Description=Obsidian
 After=graphical-session.target
 PartOf=graphical-session.target
+StartLimitIntervalSec=0
 
 [Service]
 ExecStart=/usr/bin/obsidian
@@ -10,4 +11,4 @@ RestartSec=5s
 TimeoutStopSec=5s
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=graphical-apps.target

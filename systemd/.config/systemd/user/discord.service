@@ -3,12 +3,14 @@ Description=Discord
 After=graphical-session.target throne.service
 Wants=throne.service
 PartOf=graphical-session.target
+StartLimitIntervalSec=0
 
 [Service]
+ExecStartPre=/bin/sh -c 'nmcli -t -f DEVICE,STATE device status | grep -q "^throne-tun:connected"'
 ExecStart=/usr/bin/discord
 Restart=always
 RestartSec=5s
 TimeoutStopSec=5s
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=graphical-apps.target

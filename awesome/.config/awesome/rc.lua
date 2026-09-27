@@ -94,3 +94,10 @@ client.connect_signal("property::name", function(c)
 		c:raise()
 	end
 end)
+
+-- Phase 2 of session startup: launch GUI apps only after the WM is fully
+-- initialized, so they never race session setup (cursor theme, EWMH, tray).
+-- Infra (picom, throne, clipcat, xremap) starts earlier from ~/.xprofile via
+-- graphical-login.target. Re-running this on in-place awesome restarts is a
+-- no-op for already-active units. See graphical-apps.target.
+awful.spawn.with_shell("systemctl --user start graphical-apps.target")

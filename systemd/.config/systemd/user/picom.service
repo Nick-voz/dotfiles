@@ -2,6 +2,7 @@
 Description=Picom Compositor
 After=graphical-session.target
 PartOf=graphical-session.target
+StartLimitIntervalSec=0
 
 [Service]
 ExecStart=/usr/bin/picom

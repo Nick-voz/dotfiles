@@ -8,4 +8,5 @@ export XCURSOR_SIZE=32
 # apps (Telegram, Throne, superproductivity) read the cursor theme from
 # XCURSOR_* env, not xrdb, so import before starting the session.
 systemctl --user import-environment DISPLAY XAUTHORITY XCURSOR_THEME XCURSOR_SIZE
+dbus-update-activation-environment --systemd DISPLAY XAUTHORITY XCURSOR_THEME XCURSOR_SIZE 2>/dev/null || true
 systemctl --user start graphical-login.target
