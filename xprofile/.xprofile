@@ -1,8 +1,11 @@
-systemctl --user import-environment DISPLAY XAUTHORITY
-systemctl --user start graphical-login.target
-
 # X11 cursor fallback: GTK apps read settings.ini and GNOME apps read
 # dconf, but everything else (root window, Electron/CEF, Java) only sees
 # libXcursor env. Keep in sync with gtk settings.ini and dconf.
 export XCURSOR_THEME=catppuccin-mocha-dark-cursors
 export XCURSOR_SIZE=32
+
+# systemd user units inherit only the manager environment. Qt/Electron
+# apps (Telegram, Throne, superproductivity) read the cursor theme from
+# XCURSOR_* env, not xrdb, so import before starting the session.
+systemctl --user import-environment DISPLAY XAUTHORITY XCURSOR_THEME XCURSOR_SIZE
+systemctl --user start graphical-login.target

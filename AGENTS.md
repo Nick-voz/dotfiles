@@ -17,7 +17,7 @@ Packages: `awesome`, `bash`, `clipcat`, `fish`, `fonts`, `gtk`, `kitty`, `nvim`,
 ## Key facts
 
 - **Shell**: fish with `pure` prompt, `fisher` plugin manager, `eza` for ls. Bash `.bashrc` is minimal (interactive-only).
-- **WM**: AwesomeWM with Catppuccin Mocha theme, `Mod4` as primary key, autostarts picom/nm-applet/blueman/steam/Telegram/discord/betterbird/firefox. Clipboard history is handled by clipcatd via a systemd user service, not Awesome autostart.
+- **WM**: AwesomeWM with Catppuccin Mocha theme, `Mod4` as primary key. No in-`rc.lua` autostart: GUI apps (picom, throne, steam, telegram, discord, superproductivity, firefox, obsidian) and infra (clipcatd, xremap) run as systemd user units `WantedBy=graphical-session.target`, pulled in via the `graphical-login.target` wrapper from `~/.xprofile`. All app units use `Restart=always` — a closed window comes back; stop for real with `systemctl --user stop <name>`. nm-applet/blueman-applet are intentionally not installed (Wi-Fi via `tv wifi` + nmcli, BT via bluetoothctl; stored connections still come up without the applets).
 - **Terminal**: kitty, exported once as `TERMINAL` from `xdg/.profile` (SDDM sources it before Awesome, so GUI shells inherit it); `rc.lua` and tv channels fall back to `kitty` when unset (TTY/ssh).
 - **Editor**: nvim (LazyVim) with extras: mini-surround, mini-move, json, markdown, python, toml. Stylua format: spaces, indent 2, width 120.
 - **Launcher**: tv channels. Brightness, clipboard (clipcat via `tv clipboard`), power and wifi live in `tv` channels. Firefox bookmarks moved to `tv bookmarks` (foxmarks + xdg-open), launched from `tv menu`. Web search is a `web-search.sh` helper under `tv/.config/television/scripts/`, launched from `tv menu`.

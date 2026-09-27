@@ -94,15 +94,3 @@ client.connect_signal("property::name", function(c)
 		c:raise()
 	end
 end)
-
--- autostart
-awful.spawn.with_shell("picom")
-awful.spawn.with_shell("nm-applet")
-awful.spawn.with_shell("blueman-applet")
-awful.spawn.with_shell("sudo -n " .. HOME .. "/Desktop/Throne/Throne")
-awful.spawn.with_shell("steam")
-awful.spawn.with_shell("Telegram")
-awful.spawn.with_shell("discord")
-awful.spawn.with_shell("superproductivity")
-awful.spawn.with_shell("pgrep -x firefox >/dev/null || firefox & disown")
--- awful.spawn.with_shell("ps x | grep -v grep | grep -q obsidian || obsidian")
