@@ -8,23 +8,11 @@ command = "printf '%s\\n' 'brightness' 'Clipboard' 'Edit text' 'Edit config' 'Ed
 no_sort = true
 frecency = false
 
-[preview]
-command = '''
-case '{}' in
-  brightness) echo "Set monitor brightness (tv brightness, ddcutil)" ;;
-  Clipboard) echo "Clipboard history (clipcat via tv clipboard)" ;;
-  "Edit text") echo "New note: insert a blank clip, edit it in \$EDITOR, keep it in history (clipcatctl insert + edit)" ;;
-  "Edit config") echo "Pick a config dir (tv dirs-config), then open it in a new terminal" ;;
-  "Edit obsidian") echo "Pick a note (tv files-obsidian), then open it in a new terminal" ;;
-  "Web search") echo "Pick a search engine, enter a query, open it in firefox" ;;
-  "Volume control") echo "PulseAudio mixer TUI (pulsemixer)" ;;
-  wifi) echo "WiFi manager TUI (wlctl)" ;;
-esac
-'''
-shell = "bash"
-
 [keybindings]
 enter = "actions:run"
+
+[ui.preview_panel]
+hidden = true
 
 [actions.run]
 description = "Run the selected menu entry"
