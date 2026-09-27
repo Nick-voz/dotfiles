@@ -35,7 +35,7 @@ end
 beautiful.init("~/.config/awesome/themes/default.lua")
 
 -- init vars
-TERMINAL = "kitty"
+TERMINAL = os.getenv("TERMINAL") or "kitty"
 EDITOR = os.getenv("EDITOR") or "vim"
 EDITOR_CMD = TERMINAL .. " -e " .. EDITOR
 MODKEY = "Mod4"

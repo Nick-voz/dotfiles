@@ -22,8 +22,6 @@ if test (uname) = Linux
     alias foxmarks="foxmarks -f ~/.config/mozilla/firefox/"
 end
 export MANPAGER="nvim +Man! -c 'set nospell'"
-export EDITOR=nvim
-export TERMINAL=kitty
 
 function tcd
     cd $(tv dirs -s 'fd -t d --hidden')
