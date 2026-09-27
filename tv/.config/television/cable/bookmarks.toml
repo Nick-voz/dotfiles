@@ -1,7 +1,7 @@
 [metadata]
 name = "bookmarks"
 description = "Firefox bookmarks via foxmarks, open with xdg-open"
-requirements = ["foxmarks", "xdg-open"]
+requirements = ["foxmarks", "xdg-open", "clipcatctl"]
 
 [source]
 command = "foxmarks --column-delimiter '\\t'  bookmarks 2>/dev/null || foxmarks --column-delimiter '\\t' bookmarks 2>/dev/null"
@@ -9,13 +9,23 @@ display = "{split:\t:0}"
 output = "{split:\t:1}"
 
 [preview]
-command = "printf 'Title: %s\\nURL: %s\\n' '{split:\t:0}' '{split:\t:1}'"
+command = "printf 'URL: %s\\n' '{split:\t:1}'"
 shell = "bash"
+
+[ui]
+layout = "portrait"
+preview_panel = { size = 20 }
 
 [keybindings]
 enter = "actions:open"
+ctrl-y = "actions:copy_url"
 
 [actions.open]
 description = "Open bookmark with default browser"
 command = " open '{split:\t:1}'"
+mode = "execute"
+
+[actions.copy_url]
+description = "Copy bookmark URL to clipboard (clipcatctl insert)"
+command = "clipcatctl insert '{split:\t:1}'"
 mode = "execute"
