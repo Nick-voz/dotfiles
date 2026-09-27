@@ -1,6 +1,5 @@
 source ~/.config/fish/cachyos-config.fish
 source ~/.config/.env
-set -gx MAIL ""
 
 if test -d ~/.config/dmenu-scripts
     fish_add_path ~/.config/dmenu-scripts

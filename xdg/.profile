@@ -11,3 +11,7 @@ export XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_CACHE_HOME
 export BROWSER=firefox
 export EDITOR=/usr/bin/nvim
 export TERMINAL=kitty
+
+# Qt styling: follow the GTK3 theme (catppuccin-mocha) via the qgtk3
+# platformtheme. Covers Qt5/Qt6 system apps and Zoom's Qt6 bundle.
+export QT_QPA_PLATFORMTHEME=gtk3
