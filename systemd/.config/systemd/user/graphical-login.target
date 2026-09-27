@@ -1,0 +1,4 @@
+[Unit]
+Description=Graphical login session
+Requires=graphical-session.target
+After=graphical-session-pre.target graphical-session.target

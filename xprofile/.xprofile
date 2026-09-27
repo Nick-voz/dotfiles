@@ -1,0 +1,2 @@
+systemctl --user import-environment DISPLAY XAUTHORITY
+systemctl --user start graphical-login.target

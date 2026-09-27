@@ -21,7 +21,7 @@ case '{}' in
   Shutdown) systemctl poweroff ;;
   Reboot) systemctl reboot ;;
   Sleep) systemctl suspend ;;
-  Logout) awesome-client 'awesome.quit()' ;;
+  Logout) fish -c 'logout' ;;
 esac
 '''
 shell = "bash"

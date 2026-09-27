@@ -1,13 +1,15 @@
 [Unit]
 Description=Clipcat Daemon
-After=default.target
+After=graphical-session.target
+PartOf=graphical-session.target
 
 [Service]
 ExecStartPre=-/bin/rm -f %t/clipcat/grpc.sock
 ExecStart=/usr/bin/clipcatd --no-daemon --replace
+ExecStopPost=-/bin/rm -f %t/clipcatd.pid
 Restart=on-failure
 RestartSec=5s
 TimeoutStopSec=5s
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target

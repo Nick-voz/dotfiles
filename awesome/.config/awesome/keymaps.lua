@@ -65,7 +65,6 @@ globalkeys = gears.table.join(
 		awful.spawn(TERMINAL)
 	end, { description = "open a terminal", group = "launcher" }),
 	awful.key({ MODKEY, SHIFT }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
-	awful.key({ MODKEY, SHIFT }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
 
 	awful.key({ MODKEY }, "space", function()
 		awful.spawn(TERMINAL .. " --class tv tv menu")
