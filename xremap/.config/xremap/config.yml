@@ -56,7 +56,7 @@ keymap:
   - name: Disable Ctrl+C/V/X/Z copy-paste/cut/undo (all apps except kitty)
     exact_match: true
     application:
-      not: [/kitty/]
+      not: [/kitty/, tv.tv]
     remap:
       Ctrl-c: []
       Ctrl-v: []
