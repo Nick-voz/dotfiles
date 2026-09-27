@@ -1,11 +1,6 @@
 source ~/.config/fish/cachyos-config.fish
 source ~/.config/.env
 
-if test -d ~/.config/dmenu-scripts
-    fish_add_path ~/.config/dmenu-scripts
-    fish_add_path ~/.config/dmenu-scripts/utils/
-end
-
 alias vim="nvim"
 alias venv="source .venv/bin/activate.fish"
 alias fdate='date +"%d.%m.%Y"'

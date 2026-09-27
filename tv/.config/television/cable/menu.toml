@@ -29,7 +29,7 @@ case '{}' in
   "Edit obsidian")
     (trap '' HUP; setsid bash -c '${TERMINAL:-kitty} --class tv tv files-obsidian && ${TERMINAL:-kitty} ${EDITOR:-nvim} "$(xclip -selection secondary -out)"' </dev/null >/dev/null 2>&1 &) ;;
   "Web search")
-    (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv -e "$HOME/.config/dmenu-scripts/web-search.sh" </dev/null >/dev/null 2>&1 &) ;;
+    (trap '' HUP; setsid ${TERMINAL:-kitty} --class tv -e "$HOME/.config/television/scripts/web-search.sh" </dev/null >/dev/null 2>&1 &) ;;
   "Volume control")
     (trap '' HUP; setsid ${TERMINAL:-kitty} --class pulsemixer -e "$HOME/Desktop/pulsemixer" </dev/null >/dev/null 2>&1 &) ;;
   wifi)

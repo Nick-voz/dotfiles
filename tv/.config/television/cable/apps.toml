@@ -1,6 +1,6 @@
 [metadata]
 name = "apps"
-description = "Application launcher (replaces rofi drun): desktop entries"
+description = "Application launcher: desktop entries"
 requirements = ["bash", "gio"]
 
 [source]
@@ -62,7 +62,7 @@ header = "{split:\\t:0}"
 enter = "actions:launch"
 
 [actions.launch]
-description = "Launch the selected application detached (replaces rofi drun)"
+description = "Launch the selected application detached"
 command = '''
 file='{split:\t:1}'
 if [ "$(grep -m1 '^Terminal=' "$file" | cut -d= -f2-)" = true ] && grep -q -m1 '^Exec=' "$file"; then

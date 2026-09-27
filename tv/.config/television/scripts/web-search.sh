@@ -49,7 +49,7 @@ main() {
   local log="/tmp/web-search.log"
 
   # engine is picked in tv, passed back via secondary selection (like Edit config flow).
-  # Runs inside kitty (see menu), so the query is read from the terminal, not rofi.
+  # Runs inside kitty (see menu), so the query is read from the terminal.
   printf '' | xsel --secondary --input
   tv web-search || exit 0
 
