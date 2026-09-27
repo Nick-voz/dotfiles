@@ -22,7 +22,7 @@ ctrl-y = "actions:copy_url"
 
 [actions.open]
 description = "Open bookmark with default browser"
-command = "xdg-open '{split:\t:1}'"
+command = "setsid -f xdg-open '{split:\\t:1}' >/dev/null 2>&1 </dev/null"
 mode = "execute"
 
 [actions.copy_url]
