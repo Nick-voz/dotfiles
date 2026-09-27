@@ -1,0 +1,13 @@
+! ~/.Xresources — managed by dotfiles (`stow xprofile`).
+! Merged by SDDM Xsession (`xrdb -merge ~/.Xresources`) after ~/.xprofile.
+
+! Mouse cursor: same theme as GTK (gtk-3.0/4.0 settings.ini) and
+! XCURSOR_* in ~/.xprofile. Awesome renders the root-window cursor via
+! libxcb-cursor, which ignores XCURSOR_THEME and only reads Xcursor.theme
+! from the resource database — without these lines the wallpaper keeps
+! the default cursor while apps use Catppuccin.
+! Keep in sync with gtk settings.ini, ~/.xprofile and dconf.
+Xcursor.theme: catppuccin-mocha-dark-cursors
+Xcursor.size: 32
+
+Xft.dpi: 100

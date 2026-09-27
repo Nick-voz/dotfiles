@@ -34,6 +34,14 @@ end
 
 beautiful.init("~/.config/awesome/themes/default.lua")
 
+-- Mouse cursor: same theme as GTK (gtk-3.0/4.0 settings.ini:
+-- catppuccin-mocha-dark-cursors, size 32). Awesome renders the root
+-- cursor via libxcb-cursor, which ignores XCURSOR_THEME and only reads
+-- Xcursor.theme from the X resource database (~/.Xresources, merged by
+-- SDDM Xsession); size comes from XCURSOR_SIZE / Xcursor.size.
+-- Keep in sync with gtk settings.ini, ~/.xprofile, ~/.Xresources and dconf.
+root.cursor("left_ptr")
+
 -- init vars
 TERMINAL = os.getenv("TERMINAL") or "kitty"
 EDITOR = os.getenv("EDITOR") or "vim"
