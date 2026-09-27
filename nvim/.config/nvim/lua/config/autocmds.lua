@@ -21,3 +21,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.api.nvim_create_user_command("Tr", function(opts)
   vim.api.nvim_put({ vim.trim(vim.fn.system(opts.args)) }, "c", true, true)
 end, { nargs = 1, complete = "shellcmd" })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    local ok, rm = pcall(require, "render-markdown")
+    if ok then
+      rm.buf_disable()
+    end
+  end,
+})
