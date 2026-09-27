@@ -73,7 +73,7 @@ globalkeys = gears.table.join(
 		awful.spawn(TERMINAL .. " --class tv tv bookmarks")
 	end),
 	awful.key({ MODKEY }, "d", function()
-		awful.spawn.with_shell("drun")
+		awful.spawn(TERMINAL .. " --class tv tv apps")
 	end),
 	awful.key({ MODKEY }, "p", function()
 		awful.spawn.with_shell("power-menu")

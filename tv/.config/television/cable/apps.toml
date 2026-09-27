@@ -1,0 +1,78 @@
+[metadata]
+name = "apps"
+description = "Application launcher (replaces rofi drun): desktop entries"
+requirements = ["bash", "gio"]
+
+[source]
+command = '''
+TAB=$(printf '\t')
+declare -A seen
+files=()
+for dir in "$HOME/.local/share/applications" "$HOME/.local/share/flatpak/exports/share/applications" /var/lib/flatpak/exports/share/applications /usr/local/share/applications /usr/share/applications; do
+  [ -d "$dir" ] || continue
+  for f in "$dir"/*.desktop; do
+    [ -f "$f" ] || continue
+    id=${f##*/}
+    [ -n "${seen[$id]}" ] && continue
+    seen[$id]=1
+    files+=("$f")
+  done
+done
+if [ ${#files[@]} -gt 0 ]; then
+  awk '
+    FNR == 1 {
+      if (NR > 1) dump()
+      file = FILENAME; name = ""; skip = 0; in_main = 0
+    }
+    /^\[/ { in_main = ($0 == "[Desktop Entry]"); next }
+    in_main && /^Type=/ { if (substr($0, 6) != "Application") skip = 1; next }
+    in_main && ($0 == "NoDisplay=true" || $0 == "Hidden=true") { skip = 1; next }
+    in_main && /^Name=/ && name == "" { name = substr($0, 6); next }
+    END { dump() }
+    function dump() {
+      if (!skip && name != "")
+        printf "%s\t%s\n", name, file
+    }
+  ' "${files[@]}" | while IFS= read -r line; do
+    name=${line%%"$TAB"*}
+    file=${line#*"$TAB"}
+    [ -n "$name" ] && [ -n "$file" ] || continue
+    tryexec=$(grep -m1 '^TryExec=' "$file" | cut -d= -f2-)
+    if [ -n "$tryexec" ]; then
+      command -v "$tryexec" >/dev/null 2>&1 || continue
+    fi
+    printf '%s\n' "$line"
+  done | sort -f
+fi
+'''
+display = "{split:\\t:0}"
+shell = "bash"
+
+[preview]
+command = '''
+file='{split:\t:1}'
+awk '/^\[/{m=($0=="[Desktop Entry]")} m' "$file" | grep -E '^(Name|GenericName|Comment|Exec|TryExec|Path|Categories|Keywords|Terminal|StartupWMClass)='
+'''
+shell = "bash"
+
+[ui.preview_panel]
+header = "{split:\\t:0}"
+
+[keybindings]
+enter = "actions:launch"
+
+[actions.launch]
+description = "Launch the selected application detached (replaces rofi drun)"
+command = '''
+file='{split:\t:1}'
+if [ "$(grep -m1 '^Terminal=' "$file" | cut -d= -f2-)" = true ] && grep -q -m1 '^Exec=' "$file"; then
+  exec_line=$(grep -m1 '^Exec=' "$file" | cut -d= -f2- | sed -e 's/ %[fFuUdDnNickvm]//g' -e 's/%[fFuUdDnNickvm]//g')
+  dir=$(grep -m1 '^Path=' "$file" | cut -d= -f2-)
+  export TV_APP_EXEC="$exec_line" TV_APP_DIR="${dir:-$HOME}"
+  (trap '' HUP; setsid "${TERMINAL:-kitty}" -e bash -c 'cd "$TV_APP_DIR" && set -f && eval "exec $TV_APP_EXEC"' </dev/null >/dev/null 2>&1 &)
+else
+  (trap '' HUP; setsid gio launch "$file" </dev/null >/dev/null 2>&1 &)
+fi
+'''
+shell = "bash"
+mode = "execute"
