@@ -1,2 +1,8 @@
 systemctl --user import-environment DISPLAY XAUTHORITY
 systemctl --user start graphical-login.target
+
+# X11 cursor fallback: GTK apps read settings.ini and GNOME apps read
+# dconf, but everything else (root window, Electron/CEF, Java) only sees
+# libXcursor env. Keep in sync with gtk settings.ini and dconf.
+export XCURSOR_THEME=catppuccin-mocha-dark-cursors
+export XCURSOR_SIZE=32
