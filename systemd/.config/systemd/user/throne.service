@@ -5,10 +5,20 @@ PartOf=graphical-session.target
 StartLimitIntervalSec=0
 
 [Service]
+# This build only works fully elevated: unprivileged, it tries to raise the core
+# itself (chown root:root + chmod u+s) and then ThroneCore goes silent — no
+# handshake, no throne-tun. So sudo, and live with the consequence: the tree is
+# uid 0, so systemd --user cannot signal it (kill(2) -> EPERM, "Failed to kill
+# control group ... Operation not permitted") and cannot clean up after itself.
+# The scoped pkill below is what actually reaps the root tree, on start and stop.
+ExecStartPre=-/usr/bin/sudo -n /usr/bin/pkill -9 -x -f /home/nik/Desktop/Throne/Throne
+ExecStartPre=-/usr/bin/sudo -n /usr/bin/pkill -9 -x -f /home/nik/Desktop/Throne/ThroneCore
 ExecStart=/usr/bin/sudo -n /home/nik/Desktop/Throne/Throne
 Restart=always
-RestartSec=5s
+RestartSec=500ms
 TimeoutStopSec=5s
+ExecStopPost=-/usr/bin/sudo -n /usr/bin/pkill -9 -x -f /home/nik/Desktop/Throne/ThroneCore
+ExecStopPost=-/usr/bin/sudo -n /usr/bin/pkill -9 -x -f /home/nik/Desktop/Throne/Throne
 
 [Install]
 WantedBy=graphical-apps.target

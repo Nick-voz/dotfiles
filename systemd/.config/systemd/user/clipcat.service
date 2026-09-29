@@ -8,7 +8,7 @@ ExecStartPre=-/bin/rm -f %t/clipcat/grpc.sock
 ExecStart=/usr/bin/clipcatd --no-daemon --replace
 ExecStopPost=-/bin/rm -f %t/clipcatd.pid
 Restart=on-failure
-RestartSec=5s
+RestartSec=1s
 TimeoutStopSec=5s
 
 [Install]

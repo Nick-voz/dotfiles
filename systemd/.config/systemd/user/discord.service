@@ -9,7 +9,7 @@ StartLimitIntervalSec=0
 ExecStartPre=/bin/sh -c 'nmcli -t -f DEVICE,STATE device status | grep -q "^throne-tun:connected"'
 ExecStart=/usr/bin/discord
 Restart=always
-RestartSec=5s
+RestartSec=100ms
 TimeoutStopSec=5s
 
 [Install]

@@ -6,7 +6,7 @@ PartOf=graphical-session.target
 [Service]
 ExecStart=/usr/bin/xremap --watch=device %h/.config/xremap/config.yml
 Restart=always
-RestartSec=5s
+RestartSec=1s
 TimeoutStopSec=5s
 StandardOutput=journal
 StandardError=journal
