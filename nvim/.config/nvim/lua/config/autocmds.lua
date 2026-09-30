@@ -22,12 +22,17 @@ vim.api.nvim_create_user_command("Tr", function(opts)
   vim.api.nvim_put({ vim.trim(vim.fn.system(opts.args)) }, "c", true, true)
 end, { nargs = 1, complete = "shellcmd" })
 
+-- Hides LSP diagnostics in markdown buffers only. The LSP itself keeps working (completion, rename,
+-- formatting) and the diagnostics are still collected, they are just not drawn.
+local function set_diagnostic_display(buf)
+  vim.diagnostic.enable(not vim.bo[buf].filetype:find("^markdown"), { bufnr = buf })
+end
+
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function()
-    local ok, rm = pcall(require, "render-markdown")
-    if ok then
-      rm.buf_disable()
-    end
+  callback = function(args)
+    set_diagnostic_display(args.buf)
   end,
 })
+
+-- this file is loaded on VeryLazy, so a buffer given on the command line already has its FileType
+set_diagnostic_display(0)
