@@ -1,0 +1,11 @@
+[Unit]
+Description=Nextcloud sync timer: Documents
+
+[Timer]
+# Staggered off obsidian, both write ~/.nextcloudcmd/nextcloud.cfg.
+OnCalendar=*-*-* *:*:35
+AccuracySec=1s
+Unit=nextcloud-sync@Documents.service
+
+[Install]
+WantedBy=timers.target

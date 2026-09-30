@@ -1,0 +1,12 @@
+[Unit]
+Description=Nextcloud sync: %i
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/nextcloudcmd/credentials.env
+# No network-online.target in the user manager. Exit 0 to skip rather than
+# fail the unit, so the next minute's trigger still fires.
+ExecStart=/bin/sh -c 'nmcli -t -f CONNECTIVITY general | grep -qx full || exit 0; exec /usr/bin/nextcloudcmd --non-interactive --path %i %h/%i https://cloud.nikvoz.ru/'
+TimeoutStartSec=30min
+Nice=10
+IOSchedulingClass=idle

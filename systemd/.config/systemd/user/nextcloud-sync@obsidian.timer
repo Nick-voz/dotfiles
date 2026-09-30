@@ -1,0 +1,10 @@
+[Unit]
+Description=Nextcloud sync timer: obsidian
+
+[Timer]
+OnCalendar=*-*-* *:*:05
+AccuracySec=1s
+Unit=nextcloud-sync@obsidian.service
+
+[Install]
+WantedBy=timers.target
