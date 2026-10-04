@@ -5,6 +5,32 @@
             "complex_modifications": {
                 "rules": [
                     {
+                        "description": "Control + Shift + Option + Command + 0 -> switch to English layout",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "0",
+                                    "modifiers": { "mandatory": ["control", "shift", "option", "command"] }
+                                },
+                                "to": [{ "select_input_source": { "language": "en" } }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Control + Shift + Option + Command + 1 -> switch to Russian layout",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "1",
+                                    "modifiers": { "mandatory": ["control", "shift", "option", "command"] }
+                                },
+                                "to": [{ "select_input_source": { "language": "ru" } }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Kitty: Cmd+Backspace/D/L/W/P/Enter to Ctrl equivalents",
                         "manipulators": [
                             {
@@ -718,32 +744,6 @@
                                         "modifiers": ["left_shift"]
                                     }
                                 ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "Left Control + Left Shift + Left Option + Left Command + 0 -> switch to English layout",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "0",
-                                    "modifiers": { "mandatory": ["left_control", "left_shift", "left_option", "left_command"] }
-                                },
-                                "to": [{ "select_input_source": { "language": "en" } }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "Left Control + Left Shift + Left Option + Left Command + 1 -> switch to Russian layout",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "1",
-                                    "modifiers": { "mandatory": ["left_control", "left_shift", "left_option", "left_command"] }
-                                },
-                                "to": [{ "select_input_source": { "language": "ru" } }],
                                 "type": "basic"
                             }
                         ]
