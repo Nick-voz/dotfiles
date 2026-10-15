@@ -93,6 +93,21 @@ awful.rules.rules = {
 	{ rule = { class = "Soffice" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Xdg-desktop-portal-gtk" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "tv" }, properties = { floating = true, focus = true }, callback = resize },
+	-- Prewarmed menu terminal (menu.service). Kept hidden for the whole
+	-- session: a hotkey shows it and scripts/menu hides it again once the
+	-- command it runs is done. Sticky so it can be shown from any tag, above
+	-- so it is not buried under other windows while a step is running.
+	{
+		rule = { class = "menu" },
+		properties = {
+			floating = true,
+			sticky = true,
+			above = true,
+			skip_taskbar = true,
+			hidden = true,
+		},
+		callback = resize,
+	},
 	{ rule = { class = "Throne", name = "Confirmation" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Throne", name = "url detected" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Throne", name = "Edit" }, properties = { floating = true }, callback = resize },

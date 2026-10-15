@@ -1,0 +1,14 @@
+[Unit]
+Description=Menu terminal (prewarmed kitty window)
+After=graphical-session.target
+PartOf=graphical-session.target
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart=/usr/bin/kitty --class menu -e /usr/bin/bash %h/.config/awesome/scripts/menu
+Restart=always
+RestartSec=100ms
+TimeoutStopSec=5s
+
+[Install]
+WantedBy=graphical-apps.target

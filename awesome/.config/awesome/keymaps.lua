@@ -67,17 +67,17 @@ globalkeys = gears.table.join(
 	awful.key({ MODKEY, SHIFT }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
 
 	awful.key({ MODKEY }, "space", function()
-		awful.spawn(TERMINAL .. " --class tv tv menu")
-	end),
+		require("menu").open("tv menu")
+	end, { description = "main menu", group = "launcher" }),
 	awful.key({ MODKEY }, "b", function()
-		awful.spawn(TERMINAL .. " --class tv tv bookmarks")
-	end),
+		require("menu").open("tv bookmarks")
+	end, { description = "firefox bookmarks", group = "launcher" }),
 	awful.key({ MODKEY }, "d", function()
-		awful.spawn(TERMINAL .. " --class tv tv apps")
-	end),
+		require("menu").open("tv apps")
+	end, { description = "applications", group = "launcher" }),
 	awful.key({ MODKEY }, "p", function()
-		awful.spawn.with_shell("power-menu")
-	end),
+		require("menu").open("tv power")
+	end, { description = "power menu", group = "launcher" }),
 
 	awful.key({ MODKEY, ALT }, "space", function()
 		awful.layout.inc(1)

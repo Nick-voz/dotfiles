@@ -10,8 +10,6 @@ if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
     alias scrot='scrot "$HOME/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png" -e '\''clipcatctl load -k clipboard -m image/png -f "$f"'\'''
     alias logout="systemctl --user stop graphical-login.target; awesome-client 'awesome.quit()'"
-    alias power-menu="$TERMINAL --class tv tv power"
-    alias menu="tv menu"
     alias update="sudo pacman -Syu"
     alias foxmarks="foxmarks -f ~/.config/mozilla/firefox/"
 end

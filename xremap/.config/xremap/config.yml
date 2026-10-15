@@ -2,7 +2,7 @@ keymap:
   - name: TV — word/line ops via alt keys
     exact_match: true
     application:
-      only: tv.tv
+      only: [tv.tv, menu.menu]
     remap:
       Alt-BackSpace: Alt-w
       Ctrl-BackSpace: Alt-u
@@ -56,7 +56,7 @@ keymap:
   - name: Disable Ctrl+C/V/X/Z copy-paste/cut/undo (all apps except kitty)
     exact_match: true
     application:
-      not: [/kitty/, tv.tv]
+      not: [/kitty/, tv.tv, menu.menu]
     remap:
       Ctrl-c: []
       Ctrl-v: []

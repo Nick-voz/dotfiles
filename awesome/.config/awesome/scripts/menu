@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+# Prewarmed menu terminal.
+#
+# Runs inside a dedicated kitty window (WM_CLASS "menu", started by
+# menu.service) that awesome keeps hidden for the whole session. It waits for
+# command requests on a FIFO, runs them on the pty and tells awesome when the
+# window may be hidden again.
+#
+# A request is two lines: a mode and a shell command. Nothing here knows about
+# tv: `tv menu`, `nvim`, a bare prompt - all of them are just a command string.
+#
+#   menu --send "<command>"   queue a follow-up step into the running window
+#                             (used by the tv menu-like channels to chain
+#                             menu -> brightness -> ... in a single window)
+#
+# A chained request is picked up as soon as the current command exits, so the
+# window is never hidden between two steps of one flow.
+
+set -u
+
+RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp}/awesome-menu"
+FIFO="$RUNTIME_DIR/request"
+LOCK="$RUNTIME_DIR/server.lock"
+LOG="$RUNTIME_DIR/server.log"
+LAST_RC="$RUNTIME_DIR/last.rc"
+# How long to wait for a chained request after a command exits. Data that is
+# already buffered is found instantly, so this only costs time on the last step
+# of a flow - right when the window is about to be hidden anyway.
+PEEK_TIMEOUT=0.05
+
+mkdir -p "$RUNTIME_DIR"
+
+log() {
+	printf '%s menu[%s]: %s\n' "$(date +%T)" "$$" "$*" >>"$LOG"
+}
+
+# ---------------------------------------------------------------- client mode
+
+# A second server (unit restart racing a manual launch) would steal requests
+# from the first one: it takes no lock and exits, its window closes and kitty
+# quits with it.
+server_running() {
+	exec 8>"$LOCK" 2>/dev/null || return 1
+	if flock -n 8; then
+		exec 8>&-
+		return 1
+	fi
+	exec 8>&-
+	return 0
+}
+
+send() {
+	local cmd=$1
+
+	[[ -n $cmd ]] || return 1
+
+	if [[ -p $FIFO ]] && server_running; then
+		# O_WRONLY never blocks here: the server holds the FIFO open for
+		# reading, so the request is queued even while it runs a command.
+		exec 4>"$FIFO" || return 1
+		printf '%s\n%s\n' "auto" "$cmd" >&4
+		exec 4>&-
+		return 0
+	fi
+
+	# No prewarmed window (menu.service not running): fall back to opening a
+	# throwaway terminal for the next step, the way the tv channels used to.
+	log "no server, spawning a window for: $cmd"
+	(
+		trap '' HUP
+		setsid ${TERMINAL:-kitty} --class tv -e bash -c "$cmd" \
+			</dev/null >/dev/null 2>&1 &
+	)
+}
+
+if [[ ${1:-} == --send ]]; then
+	shift
+	send "$*"
+	exit 0
+fi
+
+# ---------------------------------------------------------------- server mode
+
+[[ -p $FIFO ]] || mkfifo -m 600 "$FIFO"
+
+# The server logs every request for the whole session; keep that bounded.
+if [[ -f $LOG ]] && [[ $(stat -c %s "$LOG") -gt 262144 ]]; then
+	: >"$LOG"
+fi
+
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# Reverse channel to the WM. Arbitrary X properties produce no signal in
+# awesome (only known client properties do), so awesome-client is the reliable
+# way back.
+notify() {
+	command -v awesome-client >/dev/null 2>&1 || return 0
+	awesome-client "require('menu').event($1)" >/dev/null 2>&1 ||
+		log "notify($1) failed"
+}
+
+# Ctrl-C must reach the command in the foreground, not this loop. Closing the
+# kitty window (SIGHUP on the pty) must take the server down so systemd
+# notices and starts a fresh one.
+trap '' INT
+trap 'exit 0' HUP TERM
+
+# O_RDWR: writers never block on open and we never see EOF.
+exec 3<>"$FIFO"
+
+clear_screen() {
+	printf '\033[H\033[2J\033[3J'
+}
+
+clear_screen
+log "server started (window ${KITTY_WINDOW_ID:-?})"
+
+mode="auto"
+cmd=""
+queued=""
+
+while :; do
+	if [[ -n $queued ]]; then
+		cmd=$queued
+		queued=""
+		mode="auto"
+	else
+		IFS= read -r -u 3 mode || break
+		IFS= read -r -u 3 cmd || break
+	fi
+
+	[[ -n ${cmd//[[:space:]]/} ]] || continue
+
+	clear_screen
+	notify "'busy'"
+	log "run: $cmd"
+	bash -c "$cmd"
+	rc=$?
+	log "rc=$rc"
+
+	if IFS= read -r -t "$PEEK_TIMEOUT" -u 3 mode &&
+		IFS= read -r -t "$PEEK_TIMEOUT" -u 3 queued; then
+		log "chained: $queued"
+		continue
+	fi
+
+	printf '%s\n' "$rc" >"$LAST_RC"
+	notify "'done',$rc"
+done
+
+log "server exiting"

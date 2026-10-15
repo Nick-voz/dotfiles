@@ -54,6 +54,7 @@ HOME = os.getenv("HOME")
 
 require("keymaps")
 require("rules")
+require("menu")
 
 awful.layout.layouts = {
 	awful.layout.suit.tile,
