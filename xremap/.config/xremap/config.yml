@@ -12,7 +12,7 @@ keymap:
   - name: Obsidian — gtk-like keybindings
     exact_match: true
     application:
-      only: ["/obsidian/", "/superproductivity/"]
+      only: ["/obsidian/", "/superproductivity/", "/Telegram/"]
     remap:
       Shift-Alt-Left: Ctrl-Shift-Left
       Shift-Alt-Right: Ctrl-Shift-Right
