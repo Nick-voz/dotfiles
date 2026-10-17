@@ -33,7 +33,15 @@ tv "$channel"
 
 selected=$(xclip -selection secondary -out 2>/dev/null) || selected=
 
-[ -n "$selected" ] || exit 0
+# Nothing to edit means just letting the menu window close (exit 0), which is
+# not only an empty selection: when the source yields nothing (an empty obsidian
+# vault, a source command that fails) tv offers the placeholder "Command produced
+# no output on stdout, checking stderr..." as selectable rows, so enter does run
+# the action and the selection comes back as that text instead of being empty.
+# A path that does not exist catches that, a cancelled picker and a query that
+# filters every entry out (tv exits 0 there too) alike. `-e` covers both
+# channels: dirs-config picks directories, files-obsidian files.
+[ -n "$selected" ] && [ -e "$selected" ] || exit 0
 
 # The path is handed over as "$1" instead of being interpolated, so spaces and
 # quotes in a filename need no escaping.
