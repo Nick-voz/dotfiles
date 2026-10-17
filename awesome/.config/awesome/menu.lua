@@ -1,14 +1,3 @@
--- Prewarmed menu terminal.
---
--- One dedicated kitty window (WM_CLASS "menu", started by menu.service) stays
--- alive for the whole session and is kept hidden by awesome. A hotkey shows it
--- and hands a command to scripts/menu over a FIFO; the wrapper runs the command
--- on the pty, picks up a chained follow-up request if one was queued (see the
--- tv menu channel), and reports back when the window may be hidden again.
---
--- The wrapper is not tied to any program: `tv menu`, `nvim` or a bare prompt are
--- all just a command string.
-
 local awful = require("awful")
 local gears = require("gears")
 
@@ -35,19 +24,19 @@ local function shell_quote(s)
 	return "'" .. s:gsub("'", "'\\''") .. "'"
 end
 
-local function hide()
-	local c = find_client()
+local function hide(c)
+	c = c or find_client()
 	if c and not c.hidden then
 		c.hidden = true
 	end
-	-- Focus is restored by awful.autofocus, which reacts to property::hidden
-	-- and prefers the last focused non-sticky client - i.e. the window that was
-	-- focused before the menu.
+end
+
+local function activate(c)
+	c:lower()
+	c:emit_signal("request::activate", "menu", { raise = true })
 end
 
 local function send(cmd, request_mode)
-	-- Two lines: mode + command. Written from a forked shell so that the FIFO
-	-- open can wait for the wrapper to come up without stalling awesome.
 	awful.spawn({
 		"sh",
 		"-c",
@@ -60,24 +49,33 @@ local function send(cmd, request_mode)
 	}, false)
 end
 
+local function request_window(cmd, request_mode, action)
+	pending = { cmd = cmd, mode = request_mode }
+	awful.spawn({ "systemctl", "--user", action, "--no-block", menu.service }, false)
+	local request = pending
+	gears.timer.start_new(3, function()
+		if pending == request then
+			pending = nil
+		end
+	end)
+end
+
 function menu.open(cmd, request_mode)
-	if busy then
-		return
-	end
 	request_mode = request_mode or "auto"
 
 	local c = find_client()
+
+	if busy then
+		if c and not c.hidden then
+			return
+		end
+
+		request_window(cmd, request_mode, "restart")
+		return
+	end
+
 	if not c then
-		-- The window is gone: closed, or the unit has not come up yet. Let
-		-- systemd start it and send the request once it is mapped.
-		pending = { cmd = cmd, mode = request_mode }
-		awful.spawn({ "systemctl", "--user", "start", "--no-block", menu.service }, false)
-		local request = pending
-		gears.timer.start_new(3, function()
-			if pending == request then
-				pending = nil
-			end
-		end)
+		request_window(cmd, request_mode, "start")
 		return
 	end
 
@@ -87,7 +85,12 @@ function menu.open(cmd, request_mode)
 		resize(c) -- the screen may have changed while the window was hidden
 	end
 	c.hidden = false
-	c:emit_signal("request::activate", "menu", { raise = true })
+	activate(c)
+	gears.timer.start_new(0.05, function()
+		if not c.hidden and client.focus == c then
+			activate(c)
+		end
+	end)
 	send(cmd, request_mode)
 end
 
@@ -102,6 +105,19 @@ function menu.event(what, rc)
 		end
 	end
 end
+
+client.connect_signal("unfocus", function(c)
+	if c.class == menu.class then
+		hide(c)
+	end
+end)
+
+tag.connect_signal("property::selected", function()
+	local c = find_client()
+	if c then
+		hide(c)
+	end
+end)
 
 client.connect_signal("manage", function(c)
 	if c.class ~= menu.class then
@@ -126,7 +142,6 @@ end)
 client.connect_signal("unmanage", function(c)
 	if c.class == menu.class then
 		busy = false
-		pending = nil
 	end
 end)
 
