@@ -23,6 +23,7 @@ FIFO="$RUNTIME_DIR/request"
 LOCK="$RUNTIME_DIR/server.lock"
 LOG="$RUNTIME_DIR/server.log"
 LAST_RC="$RUNTIME_DIR/last.rc"
+ENV_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/.env"
 # How long to wait for a chained request after a command exits. Data that is
 # already buffered is found instantly, so this only costs time on the last step
 # of a flow - right when the window is about to be hidden anyway.
@@ -33,6 +34,18 @@ mkdir -p "$RUNTIME_DIR"
 log() {
 	printf '%s menu[%s]: %s\n' "$(date +%T)" "$$" "$*" >>"$LOG"
 }
+
+# Everything this window runs inherits its environment, and that environment is
+# missing ~/.config/.env: the unit starts bash non-interactively, so neither
+# .bashrc nor config.fish get read. Without this the AI integration breaks
+# (nvim's parrot reads PERPLEXITY_API_KEY from the env, and .env is where the
+# key lives), and firefox/yazi/clipcatctl edit from the menu are just as blind.
+# Sourced rather than passed via EnvironmentFile=, which silently drops the
+# `export KEY=...` lines this file is written in (verified on systemd 262).
+if [ -r "$ENV_FILE" ]; then
+	# shellcheck disable=SC1090
+	source "$ENV_FILE"
+fi
 
 # ---------------------------------------------------------------- client mode
 
@@ -135,7 +148,14 @@ while :; do
 	clear_screen
 	notify "'busy'"
 	log "run: $cmd"
-	bash -c "$cmd"
+	# 9 and 3 must not leak into the command: fd 9 is the flock this server is
+	# identified by and fd 3 the FIFO it reads from, and a command that outlives
+	# the request (a kitty window with the editor, xsel serving a selection, a
+	# daemon of any kind) would keep them open after it exits. The lock is the
+	# bad one: the next server sees it still held, exits at `flock -n 9`, and
+	# `Restart=always` turns every unit restart into a 100ms crash loop for as
+	# long as that stray descendant lives.
+	bash -c "$cmd" 9>&- 3<&-
 	rc=$?
 	log "rc=$rc"
 

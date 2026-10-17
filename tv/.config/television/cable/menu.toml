@@ -14,15 +14,17 @@ enter = "actions:run"
 [ui.preview_panel]
 hidden = true
 
-# Interactive follow-ups (a tv channel, nvim, a prompt) are queued into the
-# prewarmed menu window instead of opening another kitty: the window is already
-# visible, so menu -> brightness -> ... stays in one window and is hidden again
-# when the last step exits. Anything that needs its own X window (GTK apps)
-# still gets a throwaway terminal.
+# Interactive follow-ups (a tv channel, a prompt) are queued into the prewarmed
+# menu window instead of opening another kitty: the window is already visible,
+# so menu -> brightness -> ... stays in one window and is hidden again when the
+# last step exits. Anything that outlives the menu (an editor, GTK apps) gets
+# its own window instead - via the script that runs the last menu step, since a
+# follow-up queued with --send would be run by the menu window itself.
 [actions.run]
 description = "Run the selected menu entry"
 command = '''
 MENU="$HOME/.config/awesome/scripts/menu"
+EDIT_FILE="$HOME/.config/television/scripts/edit-file.sh"
 case '{}' in
   brightness)
     "$MENU" --send "tv brightness" ;;
@@ -31,9 +33,9 @@ case '{}' in
   "Edit text")
     "$MENU" --send "$HOME/.config/television/scripts/edit-clip.sh" ;;
   "Edit config")
-    "$MENU" --send "tv dirs-config && ${EDITOR:-nvim} \"\$(xclip -selection secondary -out)\"" ;;
+    "$MENU" --send "$EDIT_FILE dirs-config" ;;
   "Edit obsidian")
-    "$MENU" --send "tv files-obsidian && ${EDITOR:-nvim} \"\$(xclip -selection secondary -out)\"" ;;
+    "$MENU" --send "$EDIT_FILE files-obsidian" ;;
   "Web search")
     "$MENU" --send "$HOME/.config/television/scripts/web-search.sh" ;;
   "Volume control")
