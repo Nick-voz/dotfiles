@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Open a mounted volume in yazi, in the prewarmed menu window.
+#
+# udiskie runs this as its file_manager, i.e. this is what the "Browse
+# directory" button on a mount notification does. yazi needs a terminal and the
+# volume has to end up in a window we already own, so the request goes to
+# awesome, which hands it to the menu window over the same FIFO `menu --send`
+# uses (see awesome/scripts/menu and awesome/menu.lua).
+#
+# Mount paths come from udisks2 and may contain anything the volume label can
+# hold, so the path is quoted twice: once for the shell that will run yazi,
+# then once for the Lua string that carries the command.
+set -u
+
+path=${1:?usage: browse MOUNTPOINT}
+
+shell_quote() {
+	printf "'%s'" "${1//\'/\'\\\'\'}"
+}
+
+lua_string() {
+	local s
+	s=$(printf '%s' "$1" | tr '[:cntrl:]' ' ')
+	s=${s//\\/\\\\}
+	s=${s//\'/\\\'}
+	printf "'%s'" "$s"
+}
+
+command="yazi $(shell_quote "$path")"
+
+# 'hold': yazi owns the window until it exits, so the menu wrapper must not
+# hide the window when the command returns.
+awesome-client "require('menu').open($(lua_string "$command"), 'hold')" >/dev/null 2>&1 ||
+	printf 'browse: awesome-client failed, no menu window for %s\n' "$path" >&2

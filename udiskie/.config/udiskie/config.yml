@@ -1,0 +1,26 @@
+# udiskie - automounter for removable media (USB flash drives, memory cards,
+# optical discs), a front-end for udisks2. Started by udiskie.service (systemd
+# package) as part of graphical-session.target, so it is up for the whole
+# session and dies with it. Volumes are mounted under /run/media/$USER/<label>.
+#
+# Notifications go through libnotify, whose daemon here is awesome itself:
+# awesome owns org.freedesktop.Notifications and renders them as naughty
+# popups. It advertises the "actions" capability, so udiskie's notification
+# buttons work - most usefully "Browse directory" on a mounted volume, which
+# runs file_manager below. (dunst is installed but is not running and is not
+# what answers on the bus; do not go looking for it.)
+program_options:
+  automount: true
+  notify: true
+  tray: false
+  # file_manager (the target of the notification's "Browse directory" button)
+  # is passed in udiskie.service, for the same reason it cannot be written
+  # here: it needs %h, and only systemd expands that.
+
+device_config:
+  # udisks2 mounts removable media relatime, which still writes an inode
+  # access time on every read - not something a flash drive needs. Catch-all
+  # rule, so it can only ever hit devices udiskie actually handles: its
+  # builtin rules keep internal SATA disks, loop devices, the docker
+  # mapper symlinks and the root filesystem out.
+  - options: [noatime]

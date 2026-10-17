@@ -1,0 +1,21 @@
+[Unit]
+Description=Removable media automounter (udiskie)
+After=graphical-session.target
+PartOf=graphical-session.target
+StartLimitIntervalSec=0
+
+[Service]
+# automount/notify/tray and the mount options live in
+# ~/.config/udiskie/config.yml. file_manager is passed here because it needs %h
+# and only systemd expands that. It is the target of the notification's
+# "Browse directory" button: xdg-open, the default, would resolve
+# inode/directory through mimeapps.list and land in a bare kitty shell.
+ExecStart=/usr/bin/udiskie --file-manager="%h/.config/udiskie/scripts/browse"
+Restart=always
+RestartSec=1s
+TimeoutStopSec=5s
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target

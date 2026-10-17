@@ -1,0 +1,33 @@
+[metadata]
+name = "media"
+description = "Removable media (flash drives, cards, discs): browse in yazi, unmount, safely remove"
+requirements = ["udiskie-umount", "mountpoint"]
+
+[source]
+# udisks2 mounts removable media under /run/media/$USER, and udiskie automounts
+# on plug (systemd package), so everything listed here is mounted. Empty right
+# after login: only udisks2 itself and the root filesystem are mounted.
+command = "find /run/media/$USER -mindepth 1 -maxdepth 1 -type d 2>/dev/null"
+
+[preview]
+command = "df -h '{}' | tail -n 1 && echo && ls -la --color=always '{}' 2>/dev/null | head -20"
+
+[keybindings]
+enter = "actions:browse"
+ctrl-e = "actions:eject"
+ctrl-u = "actions:unmount"
+
+[actions.browse]
+description = "Open the volume in yazi, in this window"
+command = "yazi '{}'"
+mode = "execute"
+
+[actions.eject]
+description = "Safely remove: unmount and power off the drive (or eject the disc)"
+command = "$HOME/.config/udiskie/scripts/eject '{}'"
+mode = "execute"
+
+[actions.unmount]
+description = "Unmount the volume, leave the drive powered"
+command = "udiskie-umount --no-detach '{}' && notify-send 'Unmounted' '{}' >/dev/null"
+mode = "execute"

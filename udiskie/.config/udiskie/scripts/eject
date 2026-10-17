@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Safe-remove for a mounted volume: unmount it, then power off the drive (or
+# eject it, for optical media), and report the result through libnotify - whose
+# daemon here is awesome itself, so it lands as a naughty popup.
+#
+# Called from the `tv media` channel. It is a script rather than an inline
+# channel command because two things have to happen afterwards - the popup and
+# the check of what actually happened to the mount point - and the menu window
+# hides itself as soon as the command it runs exits, so anything printed to the
+# pty would be gone before it could be read.
+#
+# The exit code of udiskie-umount is deliberately not taken as the answer:
+# a busy mount point, a drive that cannot be powered off and a volume that is
+# already gone all have to be told apart, and only the mount point itself is
+# reliable for that.
+set -u
+
+path=${1:?usage: eject MOUNTPOINT}
+name=${path##*/}
+
+output=$(udiskie-umount --detach --eject "$path" 2>&1) || true
+
+if mountpoint -q "$path"; then
+	# Still there: something holds it open (a shell cwd, yazi, an editor).
+	# Flattened to one line and clipped - a popup is not a log.
+	reason=$(printf '%s' "$output" | tr '\n' ' ' | tr -s ' ' | cut -c 1-200)
+	notify-send -u critical "Cannot remove $name" "${reason:-still mounted}" >/dev/null
+	exit 1
+fi
+
+notify-send "Removed $name" "Unmounted, power off requested" >/dev/null

@@ -1,10 +1,10 @@
 [metadata]
 name = "menu"
-description = "Main menu: brightness, clipboard, edit text, edit config/obsidian, web search, volume, wifi"
+description = "Main menu: brightness, clipboard, edit text, edit config/obsidian, web search, volume, wifi, removable media"
 requirements = ["tv", "kitty", "xclip", "xsel", "clipcatctl"]
 
 [source]
-command = "printf '%s\\n' 'brightness' 'Clipboard' 'Edit text' 'Edit config' 'Edit obsidian' 'Web search' 'Volume control' 'wifi'"
+command = "printf '%s\\n' 'brightness' 'Clipboard' 'Edit text' 'Edit config' 'Edit obsidian' 'Web search' 'Volume control' 'wifi' 'Removable media'"
 no_sort = true
 frecency = false
 
@@ -40,6 +40,8 @@ case '{}' in
     (trap '' HUP; setsid ${TERMINAL:-kitty} --class pulsemixer -e "$HOME/Desktop/pulsemixer" </dev/null >/dev/null 2>&1 &) ;;
   wifi)
     (trap '' HUP; setsid ${TERMINAL:-kitty} --class wlctl -e wlctl </dev/null >/dev/null 2>&1 &) ;;
+  "Removable media")
+    "$MENU" --send "tv media" ;;
 esac
 '''
 shell = "bash"
