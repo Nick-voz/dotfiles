@@ -7,7 +7,12 @@ requirements = ["fd"]
 command = "fd -t d --max-depth 4 . $HOME/.config $HOME/dotfiles"
 
 [preview]
-command = "ls -la --color=always '{}'"
+command = '''
+target=$("$HOME/.config/television/scripts/stow-target.sh" '{}')
+printf '%s\n' "$target"
+ls -la --color=always "$target"
+'''
+shell = "bash"
 
 [keybindings]
 shortcut = "f2"
