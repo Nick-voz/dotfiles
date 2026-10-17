@@ -13,6 +13,9 @@ frecency = false
 [ui.preview_panel]
 hidden = true
 
+[ui.status_bar]
+hidden = true
+
 [keybindings]
 enter = "actions:promote"
 ctrl-d = ["actions:remove", "reload_source"]

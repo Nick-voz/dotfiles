@@ -14,6 +14,9 @@ enter = "actions:set"
 [ui.preview_panel]
 hidden = true
 
+[ui.status_bar]
+hidden = true
+
 [actions.set]
 description = "Set monitor brightness"
 command = '''

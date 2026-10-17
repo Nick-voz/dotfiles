@@ -14,6 +14,9 @@ enter = "actions:pick"
 [ui.preview_panel]
 hidden = true
 
+[ui.status_bar]
+hidden = true
+
 [actions.pick]
 description = "Copy engine name to secondary selection"
 command = "printf '%s' '{}' | xsel --secondary --input"

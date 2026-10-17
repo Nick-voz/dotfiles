@@ -58,6 +58,9 @@ shell = "bash"
 [ui.preview_panel]
 header = "{split:\\t:0}"
 
+[ui.status_bar]
+hidden = true
+
 [keybindings]
 enter = "actions:launch"
 

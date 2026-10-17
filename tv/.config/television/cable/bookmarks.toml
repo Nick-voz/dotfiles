@@ -16,6 +16,9 @@ shell = "bash"
 layout = "portrait"
 preview_panel = { size = 20 }
 
+[ui.status_bar]
+hidden = true
+
 [keybindings]
 enter = "actions:open"
 ctrl-y = "actions:copy_url"

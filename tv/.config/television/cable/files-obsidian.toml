@@ -14,6 +14,9 @@ env = { BAT_THEME = "ansi" }
 shortcut = "f1"
 enter = "actions:open"
 
+[ui.status_bar]
+hidden = true
+
 [actions.open]
 description = "Copy selected path to clipboard"
 command = "printf '%s' '{}' | xsel --secondary --input"

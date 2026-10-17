@@ -14,6 +14,9 @@ enter = "actions:run"
 [ui.preview_panel]
 hidden = true
 
+[ui.status_bar]
+hidden = true
+
 # Interactive follow-ups (a tv channel, a prompt) are queued into the prewarmed
 # menu window instead of opening another kitty: the window is already visible,
 # so menu -> brightness -> ... stays in one window and is hidden again when the

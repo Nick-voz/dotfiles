@@ -17,6 +17,9 @@ enter = "actions:browse"
 ctrl-e = "actions:eject"
 ctrl-u = "actions:unmount"
 
+[ui.status_bar]
+hidden = true
+
 [actions.browse]
 description = "Open the volume in yazi, in this window"
 command = "yazi '{}'"

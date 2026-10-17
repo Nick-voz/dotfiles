@@ -18,6 +18,9 @@ shell = "bash"
 shortcut = "f2"
 enter = "actions:open"
 
+[ui.status_bar]
+hidden = true
+
 [actions.open]
 description = "Copy selected path to clipboard"
 command = "printf '%s' '{}' | xsel --secondary --input"
