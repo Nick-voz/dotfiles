@@ -3,6 +3,15 @@
 LazyVim with extras: mini-surround, mini-move, json, markdown, python, toml.
 Stylua format: spaces, indent 2, width 120 (`stylua.toml` in the config).
 
+## Diffs
+
+Neogit renders diffs through diffview, so `lua/plugins/diffview.lua`
+decides every layout — including commits, staged and unstaged files.
+diffview names layouts by the axis the panes sit on, the opposite of
+Vim's splits: `diff2_horizontal` = side by side (`:vsp`), `diff2_vertical`
+= stacked (`:sp`). Two-sided views use the former; merge tool keeps
+`diff4_mixed`.
+
 parrot.nvim reads `PERPLEXITY_API_KEY`, which comes from the untracked
 `~/.config/.env` (see the root `AGENTS.md`). Inside the menu window that env
 is sourced by the menu server — see `awesome/AGENTS.md`.
