@@ -26,6 +26,32 @@ the line. Every other channel keeps the status bar.
 `~/Media`, so that deleting the symlink cannot silently break it (see
 `udiskie/AGENTS.md`); "poweroff" of a drive is `tv media` → `ctrl-e`.
 
+## Channel commands are templates
+
+Every `command` in a channel (`source`, `preview`, actions) is parsed as a
+template, and a `{` anywhere in it — not just a placeholder — makes the
+parse fail, so tv falls back to the raw string and **no** placeholder is
+substituted. That is why the `apps` preview showed nothing: its inline awk
+`awk '/^\[/{m=($0=="[Desktop Entry]")} m'` carries a brace block, so
+`file='{split:\t:1}'` reached the shell verbatim. Verified: `display`
+templates with `\t` are fine, and a bare `{split:\t:1}` in a `'''` block
+substitutes correctly — a second brace anywhere kills the whole command.
+
+- Keep shell logic in `scripts/` and let the channel hold a single line:
+  `apps` is now `apps-list.sh` / `apps-preview.sh` / `apps-launch.sh`, so
+  its launch action is
+  `"$HOME/.config/television/scripts/apps-launch.sh" '{split:\t:1}'`.
+- `$HOME/...` (not `scripts/...`) is required: preview and action commands
+  run from the user's cwd (see the clipboard preview below).
+
+## Apps channel
+
+`apps.toml` lists visible desktop entries (`Name<TAB>path`) and launches
+the selection: `Terminal=true` entries run their `Exec` line (field codes
+stripped) inside `$TERMINAL` with `Path=` as cwd, everything else goes
+through `gio launch`. Both detach with `setsid` and are `execute`-mode, so
+tv gives the terminal back.
+
 ## Clipboard preview
 
 `tv clipboard` renders the selected entry with
