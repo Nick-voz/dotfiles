@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# usage: move-tab-to POSITION    move the active tab to POSITION (1-based, clamped to the tab count)
+set -u -o pipefail
+
+case ${1-} in '' | *[!0-9]*) echo "usage: move-tab-to POSITION" >&2; exit 1 ;; esac
+target=$1
+
+# Position of the focused tab inside its OS window and the number of tabs there.
+# kitten @ ls reports tabs in self.tabs order, which is what Tab.move_tab uses.
+info=$(kitten @ ls | jq -r '
+    [.[] | {i: (.tabs | map(.is_focused) | index(true)), n: (.tabs | length)}]
+    | map(select(.i != null)) | first
+    | if . == null then empty else "\(.i) \(.n)" end') || exit 1
+[ -n "$info" ] || exit 1
+read -r idx n <<<"$info"
+
+((n > 1)) || exit 0
+((target > n)) && target=$n
+((target < 1)) && target=1
+
+delta=$((target - 1 - idx))
+while ((delta != 0)); do
+    if ((delta > 0)); then
+        kitten @ action move_tab_forward || exit 1
+        delta=$((delta - 1))
+    else
+        kitten @ action move_tab_backward || exit 1
+        delta=$((delta + 1))
+    fi
+done
