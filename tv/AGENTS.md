@@ -26,6 +26,40 @@ the line. Every other channel keeps the status bar.
 `~/Media`, so that deleting the symlink cannot silently break it (see
 `udiskie/AGENTS.md`); "poweroff" of a drive is `tv media` → `ctrl-e`.
 
+## Clipboard preview
+
+`tv clipboard` renders the selected entry with
+`scripts/clipboard-preview.sh <clip-id>`. The id comes from the row
+(`{split:\::0}` — ids are hex without colons, preview text may contain any
+punctuation).
+
+- The preview command is run through the user's shell **from the current
+  working directory**, not from the television config dir, so a relative
+  `scripts/...` path dies with `fish: Unknown command` (the whole reason the
+  channel spells it `"$HOME/.config/television/scripts/clipboard-preview.sh"`,
+  like `menu.toml` and `dirs-config.toml` do).
+
+- Raw bytes come from clipcat's **D-Bus** `Manager.Get`
+  (`busctl --user --json=short … Get t 0x$id`, field `data[1]`, mime in
+  `data[3]`): `clipcatctl get` is unusable here because it prints
+  `preview_information`, where `\n \r \t` are replaced by two-character
+  escapes (verified byte-wise).
+- Dispatch is by mime only: `text/*` → `bat --style=plain --color=always
+  --wrap=never` (real newlines/tabs; word wrap is the preview panel's
+  `word_wrap = true`, hence `--wrap=never` to avoid double wrapping),
+  anything else → `no preview: <mime>`. Images are deliberately not
+  rendered (chafa tried and dropped: its auto-detect probes for kitty and
+  emits APC graphics sequences that tv's ANSI parser strips, leaving base64
+  garbage, and plain symbols were unwanted too).
+- Bytes go through a one-liner of python3, **not** `jq 'implode'`: `implode`
+  reads the byte array as code points and re-encodes them as UTF-8, so
+  `Класс` comes out as mojibake (verified; tabs and ASCII look fine, which
+  is what makes it misleading).
+- File-manager copies need no special case: clipcat normalizes
+  `text/uri-list` to `text/plain` on capture (verified via `clipcatctl
+  load`), so they land in the plain text branch.
+- Dependencies: busctl (systemd), jq, python3, bat.
+
 ## Edit config / Edit obsidian
 
 The flow is split: the picker stays in the menu window
