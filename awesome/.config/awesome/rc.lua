@@ -96,6 +96,23 @@ client.connect_signal("property::name", function(c)
 	end
 end)
 
+client.connect_signal("property::name", function(c)
+	if c.class and c.class:lower() == "discord" then
+		if c.name and c.name:match("'s Stream") then
+			c.floating = true
+			c.sticky = true
+			c.ontop = true
+			c.focusable = false
+			local screen_geometry = c.screen.workarea
+			c:geometry({
+				width = screen_geometry.width * 0.3,
+				height = screen_geometry.height * 0.3,
+			})
+			awful.placement.bottom_right(c, { honor_workarea = true })
+		end
+	end
+end)
+
 -- Phase 2 of session startup: launch GUI apps only after the WM is fully
 -- initialized, so they never race session setup (cursor theme, EWMH, tray).
 -- Infra (picom, throne, clipcat, xremap) starts earlier from ~/.xprofile via
