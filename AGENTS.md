@@ -15,8 +15,8 @@ This symlinks `./<package>/.config/<app>/...` → `~/.config/<app>/...`.
 Example: `stow nvim` links `nvim/.config/nvim/` → `~/.config/nvim/`.
 
 Packages: `awesome`, `bash`, `clipcat`, `fish`, `fonts`, `gtk`,
-`karabiner`, `kitty`, `nvim`, `opencode`, `pandoc`, `picom`, `ssh`,
-`systemd`, `tv`, `udiskie`, `xdg`, `xprofile`, `xremap`.
+`karabiner`, `kitty`, `nvim`, `opencode`, `pandoc`, `picom`, `scripts`,
+`ssh`, `systemd`, `tv`, `udiskie`, `xdg`, `xprofile`, `xremap`.
 
 `.stowrc` ignores `AGENTS.md` at package roots, so per-package instruction
 files are never stowed into `$HOME`.
@@ -52,6 +52,9 @@ Keep the established structure when editing any `AGENTS.md` here:
   mechanics in `awesome/AGENTS.md`, channels in `tv/AGENTS.md`.
 - **Editor**: nvim (LazyVim), opened from the menu flow; extras and
   format — `nvim/AGENTS.md`.
+- **Custom scripts**: live in package `scripts`, stowed to
+  `~/.local/bin`, which fish (`config.fish`) and the GUI session
+  (`xdg/.profile`) each put on PATH — `scripts/AGENTS.md`.
 - **Apply changes** by re-running `stow <package>` (or symlinking
   manually); preview with `git diff`.
 

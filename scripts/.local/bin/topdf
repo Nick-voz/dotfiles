@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# topdf — markdown to PDF via pandoc/eisvogel, detached by default.
+set -euo pipefail
+
+usage() {
+    echo "usage: topdf [-F] FILE.md [key=value ...] [-- raw-pandoc-args ...]"
+    echo "  bare key=value args become -M metadata; author defaults to Возисов Н.С."
+    echo "  -F  foreground: convert synchronously, no notifications, pandoc's exit code"
+}
+
+foreground=0
+case "${1:-}" in
+    -F|--foreground) foreground=1; shift ;;
+    -h|--help) usage; exit 0 ;;
+esac
+[ $# -ge 1 ] || { usage >&2; exit 2; }
+
+input=$1; shift
+
+# Strip only a real trailing extension (dot, no slash in the remainder).
+ext=${input##*.}
+if [ "$input" != "$ext" ] && [ "${ext#*/}" = "$ext" ]; then
+    output=${input%.*}.pdf
+else
+    output=$input.pdf
+fi
+
+log=${_TOPDF_LOG:-$(mktemp /tmp/topdf.XXXXXX.log)}
+
+pandoc_args=("$input" -o "$output"
+             --from markdown --template eisvogel
+             --syntax-highlighting tango --pdf-engine=xelatex)
+has_author=0 pass=0
+for arg in "$@"; do
+    if [ "$pass" = 1 ]; then
+        pandoc_args+=("$arg")
+        continue
+    fi
+    case $arg in
+        --)        pass=1 ;;
+        author=*)  has_author=1; pandoc_args+=(-M "$arg") ;;
+        *=*)       pandoc_args+=(-M "$arg") ;;
+        *)         pandoc_args+=("$arg") ;;
+    esac
+done
+(( has_author )) || pandoc_args+=(-M 'author=Возисов Н.С.')
+
+notify() {
+    [ "$foreground" = 0 ] || return 0
+    command -v notify-send >/dev/null && notify-send "$@" >/dev/null 2>&1 || true
+}
+
+convert() {
+    notify -t 2500 Pandoc "Converting $input ..."
+    if pandoc "${pandoc_args[@]}" >"$log" 2>&1; then
+        notify -t 4000 Pandoc "Success: $output"
+    else
+        local code=$?
+        notify -t 10000 -u critical Pandoc "Error: $input ($code)" "Log: $log"
+        return "$code"
+    fi
+}
+
+# Worker mode: the detached re-execution of this script.
+if [ -n "${_TOPDF_WORKER:-}" ]; then
+    convert
+    exit $?
+fi
+
+if [ "$foreground" = 1 ]; then
+    convert
+    exit 0
+fi
+
+self=$(readlink -f -- "$(command -v -- "$0")" 2>/dev/null || echo "$0")
+_TOPDF_WORKER=1 _TOPDF_LOG="$log" setsid -f -- "$self" "$input" "$@" \
+    </dev/null >/dev/null 2>&1

@@ -12,6 +12,10 @@ if test (uname) = Linux
     alias logout="systemctl --user stop graphical-login.target; awesome-client 'awesome.quit()'"
     alias update="sudo pacman -Syu"
     alias foxmarks="foxmarks -f ~/.config/mozilla/firefox/"
+    # Custom scripts (stow package `scripts`). Plain set -gx, not
+    # fish_add_path: universal state in the tracked fish_variables is
+    # shared with the mac, where this PATH order is wrong.
+    contains ~/.local/bin $PATH; or set -gx PATH ~/.local/bin $PATH
 end
 export MANPAGER="nvim +Man! -c 'set nospell'"
 
@@ -69,51 +73,3 @@ function frp
 end
 
 tv init fish | source
-
-function topdf
-    if test (count $argv) -lt 1
-        return 1
-    end
-
-    set -l input_file $argv[1]
-    set -l output_file (string replace -r '\.[^.]+$' '' $input_file).pdf
-    set -l extra_args $argv[2..-1]
-
-    set -l has_author 0
-
-    for arg in $extra_args
-        if string match -rq '^author=' -- $arg
-            set has_author 1
-        end
-    end
-
-    set -l pandoc_args \
-        "$input_file" \
-        -o "$output_file" \
-        --from markdown \
-        --template eisvogel \
-        --syntax-highlighting tango \
-        --pdf-engine=xelatex \
-        $extra_args
-
-    if test $has_author -eq 0
-        set pandoc_args $pandoc_args -M author='Возисов Н.С.'
-    end
-
-    begin
-        if type -q notify-send
-            notify-send -t 2500 Pandoc "Converting ..."
-            and pandoc $pandoc_args
-            and notify-send -t 4000 Pandoc "Success: $output_file"
-            or notify-send -t 4000 Pandoc "Error: $input_file ($status)"
-        else if type -q osascript
-            osascript -e "display notification \"Converting ...\" with title \"Pandoc\""
-            and pandoc $pandoc_args
-            and osascript -e "display notification \"Success: $output_file\" with title \"Pandoc\""
-            or osascript -e "display notification \"Error: $input_file ($status)\" with title \"Pandoc\""
-        else
-            pandoc $pandoc_args
-        end
-    end </dev/null >/dev/null 2>&1 &
-    disown
-end

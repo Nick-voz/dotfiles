@@ -2,7 +2,8 @@
 
 - `.profile` — sourced by SDDM's Xsession before the WM; exports
   `TERMINAL=kitty` (consumed by `rc.lua` and tv channels, see
-  `kitty/AGENTS.md`).
+  `kitty/AGENTS.md`) and, on Linux, prepends `~/.local/bin` to PATH
+  (package `scripts`).
 - `.config/mimeapps.list` — default applications.
 - `.config/user-dirs.dirs` — XDG user dirs.
 - `.config/environment.d/10-xdg.conf` — env for user services.
