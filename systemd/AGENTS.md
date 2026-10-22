@@ -100,6 +100,22 @@ respawns.
   wait loops after unclean stops.
 - Graphical-session-bound services (`clipcat`, `xremap`) are pulled in via
   the `graphical-login.target` wrapper (see Two-phase startup).
+- steam — expected `journalctl -p err` line, one per boot:
+  `steam-runtime-steam-remote: E: Steam is not running: No such device or
+  address`. `bin_steam.sh` first probes whether Steam is *already* open by
+  writing its command line into `~/.steam/steam.pipe` — a FIFO Steam never
+  deletes, so the probe fires every launch. At boot no Steam is holding the
+  reading end yet, so the write fails with `ENXIO`. That message *is* the
+  correct answer ("not running"); the script then starts Steam normally.
+  err-priority only because the runtime logs straight to journald, bypassing
+  the script's `2>/dev/null`. Not a fault.
+- steam also logs `Looks like steam didn't shutdown cleanly` next boot —
+  `KillMode=control-group` SIGTERMs the client on stop/logout, so Steam
+  schedules an update check on the next start. Benign.
+- Latent steam hazard: if Steam is somehow already running when the unit
+  starts, `bin_steam.sh` forwards the command line and exits 0, and
+  `Restart=always` + `RestartSec=100ms` + no rate limit re-probes the pipe
+  ~10x/s. Safe only because nothing else launches Steam here.
 
 ## Logout
 
