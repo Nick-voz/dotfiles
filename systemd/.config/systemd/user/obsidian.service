@@ -8,6 +8,7 @@ StartLimitIntervalSec=0
 ExecStart=/usr/bin/obsidian
 Restart=always
 RestartSec=100ms
+KillSignal=SIGINT
 TimeoutStopSec=5s
 
 [Install]

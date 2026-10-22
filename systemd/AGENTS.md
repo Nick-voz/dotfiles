@@ -82,10 +82,20 @@ respawns.
   is enabled in the app's UI, which is what `discord.service`'s
   `ExecStartPre` gates on.
 - discord additionally waits for `throne-tun` via `ExecStartPre` +
-  `Wants=throne.service` (start ordering only, no stop propagation).
+  `Wants=throne.service` (start ordering only, no stop propagation). The gate
+  polls (`timeout 60` + 0.5s loop): `throne-tun` goes `connected` ~2s after
+  `throne.service` starts, so a one-shot check fails the boot race and
+  floods the journal with `Failed to start Discord` while `RestartSec`
+  retries.
 
 ## Other unit notes
 
+- Electron units (`discord`, `obsidian`) need `KillSignal=SIGINT`: on
+  SIGTERM Discord ignores it (full `TimeoutStopSec`, then SIGKILL +
+  `Failed with result 'timeout'` + cores), Obsidian dumps a SIGTRAP core
+  (`Failed with result 'core-dump'`). Both stop cleanly in <1s via SIGINT.
+  SuperProductivity (Electron too) is fine as-is — the `snap run` wrapper
+  handles the signal.
 - `clipcat.service` cleans its pid file in `ExecStopPost` to avoid stale-pid
   wait loops after unclean stops.
 - Graphical-session-bound services (`clipcat`, `xremap`) are pulled in via

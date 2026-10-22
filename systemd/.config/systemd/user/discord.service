@@ -6,10 +6,11 @@ PartOf=graphical-session.target
 StartLimitIntervalSec=0
 
 [Service]
-ExecStartPre=/bin/sh -c 'nmcli -t -f DEVICE,STATE device status | grep -q "^throne-tun:connected"'
+ExecStartPre=/usr/bin/timeout 60 /bin/sh -c 'while ! nmcli -t -f DEVICE,STATE device status | grep -q "^throne-tun:connected"; do sleep 0.5; done'
 ExecStart=/usr/bin/discord
 Restart=always
 RestartSec=100ms
+KillSignal=SIGINT
 TimeoutStopSec=5s
 
 [Install]
