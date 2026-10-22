@@ -61,6 +61,7 @@ awful.rules.rules = {
 		rule_any = { class = { "libreoffice", "libreoffice-writer", "Soffice", "soffice" } },
 		properties = { screen = 1, tag = "5" },
 	},
+	{ rule_any = { class = { "Gimp", "gimp" } }, properties = { screen = 1, tag = "5" } },
 	{ rule = { class = "btop" }, properties = { screen = 1, tag = "8" } },
 	{
 		rule_any = { class = { "Happ", "Throne" } },
