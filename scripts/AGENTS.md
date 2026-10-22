@@ -16,7 +16,8 @@ into a symlink into the repo — same trap as `systemd/AGENTS.md`).
 - `-F`: synchronous, no notifications, pandoc's exit code propagates
   — the scripting interface.
 - Bare `key=value` args become `-M` metadata (`--` switches to raw
-  pandoc args); `author='Возисов Н.С.'` applies unless `author=` given.
+  pandoc args); defaults apply unless overridden: `author=` →
+  `Возисов Н.С.`, `date=` → today in `dd.mm.yyyy`.
 - PATH (Linux only): plain `set -gx` in `fish/config.fish` (deliberately
   not `fish_add_path` — see `fish/AGENTS.md`); for the GUI session
   `~/.profile` (package `xdg`) prepends it.

@@ -5,6 +5,7 @@ set -euo pipefail
 usage() {
     echo "usage: topdf [-F] FILE.md [key=value ...] [-- raw-pandoc-args ...]"
     echo "  bare key=value args become -M metadata; author defaults to Возисов Н.С."
+    echo "  and date to today as dd.mm.yyyy; explicit values win"
     echo "  -F  foreground: convert synchronously, no notifications, pandoc's exit code"
 }
 
@@ -30,7 +31,7 @@ log=${_TOPDF_LOG:-$(mktemp /tmp/topdf.XXXXXX.log)}
 pandoc_args=("$input" -o "$output"
              --from markdown --template eisvogel
              --syntax-highlighting tango --pdf-engine=xelatex)
-has_author=0 pass=0
+has_author=0 has_date=0 pass=0
 for arg in "$@"; do
     if [ "$pass" = 1 ]; then
         pandoc_args+=("$arg")
@@ -39,11 +40,13 @@ for arg in "$@"; do
     case $arg in
         --)        pass=1 ;;
         author=*)  has_author=1; pandoc_args+=(-M "$arg") ;;
+        date=*)    has_date=1; pandoc_args+=(-M "$arg") ;;
         *=*)       pandoc_args+=(-M "$arg") ;;
         *)         pandoc_args+=("$arg") ;;
     esac
 done
 (( has_author )) || pandoc_args+=(-M 'author=Возисов Н.С.')
+(( has_date )) || pandoc_args+=(-M "date=$(date +%d.%m.%Y)")
 
 notify() {
     [ "$foreground" = 0 ] || return 0
