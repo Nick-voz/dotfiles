@@ -60,3 +60,7 @@ Keep the established structure when editing any `AGENTS.md` here:
 Nothing to build, test, lint, or format. Unit enablement, `disable`
 dangers and logout live in `systemd/AGENTS.md`; stow's package-folding
 trap is documented there too.
+
+Comment style for all config code: short comments only where behavior is
+not clear from the code itself; facts and behavior belong in the
+package's `AGENTS.md`.
