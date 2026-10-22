@@ -87,6 +87,11 @@ end)
 
 client.connect_signal("property::name", function(c)
 	if c.class == "Firefox" or c.class == "firefox" then
+		local name = (c.name or "") .. " "
+		if name:match("^New Tab[%s%p]")
+			or name:match("^New Private Browsing Window[%s%p]") then
+			return
+		end
 		local s = c.screen
 		if c.first_tag then
 			c.first_tag:view_only()

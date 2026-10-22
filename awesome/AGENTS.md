@@ -13,6 +13,17 @@ No system services are started from `rc.lua` directly; the only hook at the
 never race WM init (cursor theme, EWMH, tray). Infra units are a separate
 phase driven from `~/.xprofile` — full unit picture in `systemd/AGENTS.md`.
 
+## Firefox focus grab
+
+Any firefox window title change jumps to that window — `property::name`
+in `rc.lua`: `first_tag:view_only()`, focus, raise. That is how pages
+opened via `tv bookmarks` / `web-search.sh` hand the user over.
+
+Filter: no grab for the empty tab page — titles starting with "New Tab"
+or "New Private Browsing Window" (about:newtab changes the title too and
+would steal focus for a page that is not there). The handover for a real
+page simply happens once its title lands.
+
 ## Notifications
 
 **Awesome is the notification daemon** — there is no dunst/notify-send
