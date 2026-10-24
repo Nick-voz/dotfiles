@@ -122,6 +122,22 @@ awful.rules.rules = {
 		},
 		callback = resize,
 	},
+	-- Prewarmed input server (input.service): raw text prompts run in it.
+	-- Same hidden-float lifecycle as the menu; it needs its own WM_CLASS
+	-- because xremap hands menu/tv classes' word/line kills to tv, while
+	-- input.input is excluded from every GUI rule and stays a terminal
+	-- (tv/AGENTS.md, xremap/AGENTS.md).
+	{
+		rule = { class = "input" },
+		properties = {
+			floating = true,
+			sticky = true,
+			above = true,
+			skip_taskbar = true,
+			hidden = true,
+		},
+		callback = resize,
+	},
 	{ rule = { class = "Throne", name = "Confirmation" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Throne", name = "url detected" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "Throne", name = "Edit" }, properties = { floating = true }, callback = resize },

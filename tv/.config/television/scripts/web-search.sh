@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# usage: web-search.sh        — pick engine in the menu window, then queue
+# usage: web-search.sh <eng>  — query prompt phase (the prewarmed input window)
 set -euo pipefail
 
 # NOTE: engine names must match tv/.config/television/cable/web-search.toml source
@@ -44,26 +46,18 @@ urlencode() {
   printf '%s\n' "$out"
 }
 
-main() {
-  local engine query encoded url
+prompt_and_open() { # second phase: runs in the prewarmed input window
+  local engine=$1 query encoded url
   local log="/tmp/web-search.log"
 
-  # engine is picked in tv, passed back via secondary selection (like Edit config flow).
-  # Runs inside kitty (see menu), so the query is read from the terminal.
-  printf '' | xsel --secondary --input
-  tv web-search || exit 0
-
-  engine="$(xclip -selection secondary -out)" || exit 0
-
-  [ -n "$engine" ] || exit 0
   if [ -z "${websearch[$engine]:-}" ]; then
     printf 'Unknown engine: %s\nPress Enter to close...' "$engine"
     read -r _ || true
     exit 1
   fi
 
-  printf 'Enter search query: '
-  read -r query || exit 0
+  printf 'Enter search query:\n'
+  IFS= read -er query || exit 0
 
   [ -n "$query" ] || exit 0
 
@@ -79,6 +73,27 @@ main() {
     read -r _ || true
     exit 1
   fi
+}
+
+main() {
+  local engine
+
+  if [ -n "${1:-}" ]; then
+    prompt_and_open "$1"
+    return
+  fi
+
+  # engine is picked in tv, passed back via secondary selection (like Edit config flow).
+  printf '' | xsel --secondary --input
+  tv web-search || exit 0
+
+  engine="$(xclip -selection secondary -out)" || exit 0
+
+  [ -n "$engine" ] || exit 0
+  # the query needs terminal keymaps: hand it to the prewarmed input
+  # window (menu/tv classes give those keys to tv - AGENTS.md)
+  "$HOME/.config/awesome/scripts/menu" --class input --send \
+    "$HOME/.config/television/scripts/web-search.sh $engine"
 }
 
 main "$@"

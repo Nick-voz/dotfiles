@@ -5,7 +5,7 @@ PartOf=graphical-session.target
 StartLimitIntervalSec=0
 
 [Service]
-ExecStart=/usr/bin/kitty --class menu -e /usr/bin/bash %h/.config/awesome/scripts/menu
+ExecStart=/usr/bin/kitty --class menu -o "map=ctrl+w send_text all \\x17" -o "map=ctrl+shift+w send_text all \\x17" -o "map=ctrl+shift+q no_op" -e /usr/bin/bash %h/.config/awesome/scripts/menu
 Restart=always
 RestartSec=100ms
 TimeoutStopSec=5s

@@ -12,7 +12,7 @@ keymap:
   - name: Universal navigation — gtk-style cursor keys (all apps except kitty, tv/menu)
     exact_match: true
     application:
-      not: [/kitty/, tv.tv, menu.menu]
+      not: [/kitty/, tv.tv, menu.menu, input.input]
     remap:
       Shift-Alt-Left: Ctrl-Shift-Left
       Shift-Alt-Right: Ctrl-Shift-Right
@@ -37,7 +37,7 @@ keymap:
   - name: Win+C/V/X/Z → Ctrl+C/V/X/Z (all apps except kitty)
     exact_match: true
     application:
-      not: [/kitty/]
+      not: [/kitty/, input.input]
     remap:
       Super-c: Ctrl-c
       Super-v: Ctrl-v
@@ -49,7 +49,7 @@ keymap:
   - name: Disable Ctrl+C/V/X/Z copy-paste/cut/undo (all apps except kitty)
     exact_match: true
     application:
-      not: [/kitty/, tv.tv, menu.menu]
+      not: [/kitty/, tv.tv, menu.menu, input.input]
     remap:
       Ctrl-c: []
       Ctrl-v: []

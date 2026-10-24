@@ -17,12 +17,16 @@ hidden = true
 [ui.status_bar]
 hidden = true
 
-# Interactive follow-ups (a tv channel, a prompt) are queued into the prewarmed
+# Interactive follow-ups (tv channels) are queued into the prewarmed
 # menu window instead of opening another kitty: the window is already visible,
 # so menu -> brightness -> ... stays in one window and is hidden again when the
-# last step exits. Anything that outlives the menu (an editor, GTK apps) gets
-# its own window instead - via the script that runs the last menu step, since a
-# follow-up queued with --send would be run by the menu window itself.
+# last step exits. Raw text prompts are queued into the second prewarmed
+# window (`--class input`) instead: xremap's TV rules claim word/line kills
+# from bash while the menu class is focused, and the input class stays a
+# plain terminal (AGENTS.md). Anything that outlives the menu (an editor,
+# GTK apps) gets its own window - via the script that runs the last menu
+# step, since a follow-up queued with --send would be run by the menu window
+# itself.
 [actions.run]
 description = "Run the selected menu entry"
 command = '''
@@ -42,7 +46,7 @@ case '{}' in
   "Edit obsidian")
     "$MENU" --send "$EDIT_FILE files-obsidian" ;;
   "Translate")
-    "$MENU" --send "$HOME/.config/television/scripts/translate.sh" ;;
+    "$MENU" --class input --send "$HOME/.config/television/scripts/translate.sh" ;;
   "Web search")
     "$MENU" --send "$HOME/.config/television/scripts/web-search.sh" ;;
   "Volume control")

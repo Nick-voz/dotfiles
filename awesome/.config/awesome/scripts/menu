@@ -1,24 +1,32 @@
 #!/usr/bin/env bash
-# Prewarmed menu terminal.
+# Prewarmed terminal server (+ client), one instance per window class.
 #
-# Runs inside a dedicated kitty window (WM_CLASS "menu", started by
-# menu.service) that awesome keeps hidden for the whole session. It waits for
-# command requests on a FIFO, runs them on the pty and tells awesome when the
-# window may be hidden again.
+# Runs inside a dedicated kitty window (WM_CLASS = the class, started by
+# <class>.service) that awesome keeps hidden for the whole session. It waits
+# for command requests on a FIFO, runs them on the pty and tells awesome when
+# the window may be hidden again. Classes in use: "menu" (tv flows) and
+# "input" (raw text prompts - a class xremap leaves alone as a terminal).
 #
 # A request is two lines: a mode and a shell command. Nothing here knows about
 # tv: `tv menu`, `nvim`, a bare prompt - all of them are just a command string.
 #
-#   menu --send "<command>"   queue a follow-up step into the running window
-#                             (used by the tv menu-like channels to chain
-#                             menu -> brightness -> ... in a single window)
+#   menu [--class NAME] --send "<command>"
+#                        queue a step into the running window (the tv menu
+#                        chains menu -> brightness -> ... this way;
+#                        --class input targets the prompt window)
 #
 # A chained request is picked up as soon as the current command exits, so the
 # window is never hidden between two steps of one flow.
 
 set -u
 
-RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp}/awesome-menu"
+CLASS=menu
+if [[ ${1:-} == --class ]]; then
+	CLASS=${2:?missing class}
+	shift 2
+fi
+
+RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp}/awesome-$CLASS"
 FIFO="$RUNTIME_DIR/request"
 LOCK="$RUNTIME_DIR/server.lock"
 LOG="$RUNTIME_DIR/server.log"
@@ -32,7 +40,7 @@ PEEK_TIMEOUT=0.05
 mkdir -p "$RUNTIME_DIR"
 
 log() {
-	printf '%s menu[%s]: %s\n' "$(date +%T)" "$$" "$*" >>"$LOG"
+	printf '%s %s[%s]: %s\n' "$(date +%T)" "$CLASS" "$$" "$*" >>"$LOG"
 }
 
 # Everything this window runs inherits its environment, and that environment is
@@ -79,9 +87,25 @@ send() {
 	# No prewarmed window (menu.service not running): fall back to opening a
 	# throwaway terminal for the next step, the way the tv channels used to.
 	log "no server, spawning a window for: $cmd"
+	# throwaway window: menu keeps the old floating `tv` class (xremap's tv
+	# keymaps belong to tv channels); `input` must spawn as plain kitty -
+	# a real input window would be prewarmed-hidden by the rules, and
+	# plain /kitty/ is exactly the keymap class `input` mimics.
+	local cls_opt=(--class tv)
+	[[ $CLASS == input ]] && cls_opt=()
+	# carry the units' close-key fixes here too: the global kitty.conf maps
+	# ctrl+w to close_tab, and kitty's own defaults close the window on
+	# ctrl+shift+w and the tab on ctrl+shift+q - any of them would kill the
+	# prompt with this window
+	local o=()
+	[[ ${TERMINAL:-kitty} == *kitty* ]] && o=(
+		-o "map=ctrl+w send_text all \x17"
+		-o "map=ctrl+shift+w send_text all \x17"
+		-o "map=ctrl+shift+q no_op"
+	)
 	(
 		trap '' HUP
-		setsid ${TERMINAL:-kitty} --class tv -e bash -c "$cmd" \
+		setsid ${TERMINAL:-kitty} "${cls_opt[@]}" "${o[@]}" -e bash -c "$cmd" \
 			</dev/null >/dev/null 2>&1 &
 	)
 }
@@ -109,15 +133,19 @@ flock -n 9 || exit 0
 # way back.
 notify() {
 	command -v awesome-client >/dev/null 2>&1 || return 0
-	awesome-client "require('menu').event($1)" >/dev/null 2>&1 ||
+	awesome-client "require('menu').event('$CLASS', $1)" >/dev/null 2>&1 ||
 		log "notify($1) failed"
 }
 
 # Ctrl-C must reach the command in the foreground, not this loop. Closing the
 # kitty window (SIGHUP on the pty) must take the server down so systemd
-# notices and starts a fresh one.
+# notices and starts a fresh one. The traps log which signal arrived and
+# whether kitty was still alive: that distinguishes an outside kill from the
+# window closing first.
 trap '' INT
-trap 'exit 0' HUP TERM
+trap 'log "got HUP (kitty $(kill -0 "$PPID" 2>/dev/null && echo alive || echo gone))"; exit 0' HUP
+trap 'log "got TERM (kitty $(kill -0 "$PPID" 2>/dev/null && echo alive || echo gone))"; exit 0' TERM
+trap 'log "exit rc=$?"' EXIT
 
 # O_RDWR: writers never block on open and we never see EOF.
 exec 3<>"$FIFO"
@@ -139,8 +167,8 @@ while :; do
 		queued=""
 		mode="auto"
 	else
-		IFS= read -r -u 3 mode || break
-		IFS= read -r -u 3 cmd || break
+		IFS= read -r -u 3 mode || { log "fifo read failed rc=$?"; break; }
+		IFS= read -r -u 3 cmd || { log "fifo read failed rc=$?"; break; }
 	fi
 
 	[[ -n ${cmd//[[:space:]]/} ]] || continue
@@ -148,6 +176,20 @@ while :; do
 	clear_screen
 	notify "'busy'"
 	log "run: $cmd"
+	# keystrokes typed while no command reads the pty (between commands the
+	# server waits on the FIFO, not on stdin) pile up in the terminal queue
+	# and reach the next `read -e` as instant input - a stale Enter would
+	# auto-submit it. Flush what is pending before handing the tty over.
+	stty raw -echo 2>/dev/null && {
+		junk=""
+		for _ in $(seq 10); do
+			# rc>128 means timeout; bytes read before it are still in $junk,
+			# so only an empty round means the queue is finally drained.
+			IFS= read -rt 0.1 -n 4096 junk || { [ -n "$junk" ] || break; }
+			junk=""
+		done
+		stty sane 2>/dev/null
+	}
 	# 9 and 3 must not leak into the command: fd 9 is the flock this server is
 	# identified by and fd 3 the FIFO it reads from, and a command that outlives
 	# the request (a kitty window with the editor, xsel serving a selection, a

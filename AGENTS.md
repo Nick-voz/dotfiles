@@ -48,7 +48,8 @@ Keep the established structure when editing any `AGENTS.md` here:
 - **Startup**: two-phase systemd startup (infra as
   `graphical-session.target`, GUI apps as `graphical-apps.target`) —
   `systemd/AGENTS.md`; the `rc.lua` hook — `awesome/AGENTS.md`.
-- **Menu window**: prewarmed hidden kitty window shared by the launcher —
+- **Menu window**: prewarmed hidden kitty windows shared by the launcher —
+  `menu` (tv flows) and `input` (raw-text prompts, terminal keymaps);
   mechanics in `awesome/AGENTS.md`, channels in `tv/AGENTS.md`.
 - **Editor**: nvim (LazyVim), opened from the menu flow; extras and
   format — `nvim/AGENTS.md`.

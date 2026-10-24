@@ -14,6 +14,11 @@ window is a kitty window that no longer calls itself `kitty.*`, so it
 takes exactly the path the old tv windows took — Super-C/V/A become
 Ctrl-C/V/A (no kitty copy/paste) and Ctrl+C/V/X/Z are not suppressed.
 
+The second prewarmed window, `input.input`, is the opposite: it is added to
+the `not` list of every GUI rule and left out of the TV ops `only`, so it
+behaves as a bare terminal (kitty.conf `send_text` maps + readline). That
+is why raw-text prompts run there, not in the menu window (`tv/AGENTS.md`).
+
 ## Universal navigation
 
 The "Universal navigation" keymap is the global cursor scheme:
@@ -46,3 +51,8 @@ already-selected virtual keyboard).
 `Ctrl-BackSpace` is claimed by both the TV rule (`Alt-u` → tv
 `delete_line`) and universal navigation (delete to line start):
 navigation's `not` keeps it out of tv/menu, so there TV always wins.
+The injected `Alt-w`/`Alt-u` are tv-private: a bash prompt in the menu
+window would only ever receive them as raw `ESC w`/`ESC u` bytes, so the
+raw-text prompts queue into the input window instead (excluded from every
+rule here — `tv/AGENTS.md`); the one exception, the downloads rename
+prompt, runs in the menu window and binds the escapes in-script.

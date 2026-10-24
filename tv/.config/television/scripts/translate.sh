@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # usage: translate.sh [query]  — no arg: prompt (empty = latest clip);
-# TRANSLATE_TEST=1 prints rows instead of opening tv.
+# runs in the prewarmed input window (see AGENTS.md), hands the result to
+# the menu window via scripts/menu. TRANSLATE_TEST=1 prints rows+send.
 set -uo pipefail
 
 UA='Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0'
@@ -85,8 +86,10 @@ browser_fallback() {
 
 query="${1:-}"
 if [ -z "$query" ]; then
-  printf 'Translate: '
-  IFS= read -r query || exit 0
+  # label on its own line: readline treats col 0 of the current line as its
+  # start, so kill-line (ctrl+BS) would repaint the inline label away
+  printf 'Translate:\n'
+  IFS= read -er query || exit 0
   [ -n "${query//[[:space:]]/}" ] || query=$(latest_clip) || { printf 'no text on clipboard\n'; exit 0; }
 fi
 query=$(printf '%s' "$query" | tr '\n\r\t' '   ' | sed 's/^ *//; s/ \+/ /g; s/ $//')
@@ -96,7 +99,10 @@ if [[ "$query" =~ [А-Яа-яЁё] ]]; then tl=en; else tl=ru; fi
 
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
-rows="$work/rows"
+# rows must outlive this script (the menu window cats them), so they go to
+# the cache dir, overwritten per run; $work is only per-run wiki scratch
+mkdir -p "$CACHE"
+rows="$CACHE/rows"
 
 wpid='' flipped=0
 if [ -n "${TRANSLATE_FIXTURE:-}" ]; then # saved web json; skips the network for testing
@@ -150,9 +156,12 @@ else
 fi
 [ -s "$rows" ] || { browser_fallback; exit 0; }
 
+send="TRANSLATE_ROWS=\"$rows\" tv translate --input-header \"$hdr\""
+
 if [ -n "${TRANSLATE_TEST:-}" ]; then
   sed $'s/\t/  |  /g' "$rows"
+  printf 'send: %s\n' "$send"
   exit 0
 fi
 
-TRANSLATE_ROWS="$rows" tv translate --input-header "$hdr"
+"$HOME/.config/awesome/scripts/menu" --send "$send"

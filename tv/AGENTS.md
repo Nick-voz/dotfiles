@@ -33,6 +33,22 @@ the line. Every other channel keeps the status bar.
 `~/Media`, so that deleting the symlink cannot silently break it (see
 `udiskie/AGENTS.md`); "poweroff" of a drive is `tv media` → `ctrl-d`.
 
+The raw text prompts (`translate.sh`, `web-search.sh`) deliberately do not
+use this window: the TV rules claim word/line kills for tv exactly while a
+menu-class window is focused (`xremap/AGENTS.md`), so a bash `read` here
+would receive their `Alt-w`/`Alt-u` outputs as raw escape bytes. They are
+queued into the second prewarmed window instead — `scripts/menu --class
+input`, whose WM_CLASS is excluded from every xremap GUI rule and absent
+from the TV rules' `only` list, so editing there works exactly like in a
+normal terminal (kitty.conf `send_text` maps + readline defaults; `read -e`
+is required: plain `read` uses no readline). Every prompt window carries
+`-o` overrides for all three keys that close a kitty window — the global
+conf's `ctrl+w` (`close_tab`) becomes readline's word-rubout and kitty's
+built-in `ctrl+shift+w` (`close_window`) / `ctrl+shift+q` (`close_tab`)
+are neutralized — in the units' ExecStart and in `scripts/menu`'s
+throwaway spawn alike (`awesome/AGENTS.md`). The
+prompt hands its result back to the menu with `--send`, whose `busy` event
+re-shows the hidden window (`awesome/AGENTS.md`).
 
 ## Channel commands are templates
 
@@ -96,10 +112,12 @@ punctuation).
 
 ## Translate
 
-`tv menu` → Translate → `scripts/translate.sh` runs in the menu window:
-prompts for a query (empty Enter = latest clipcat entry), translates via
-Google and reopens the result as `tv translate` there; Enter copies the
-selected row (`xsel`), Esc closes without copying.
+`tv menu` → Translate → `scripts/translate.sh` runs in the prewarmed input
+window (prompt keymaps: see Channels and the menu window above): prompts
+for a query (empty Enter = latest clipcat entry), translates via Google
+and queues the result as `tv translate` back into the menu window via
+`scripts/menu --send`; Enter copies the selected row (`xsel`), Esc closes
+without copying.
 
 - One request serves both modes: `translate_a` with `dt=t&dt=bd` yields a
   word's dictionary (`.[1]`: POS groups, per-word confidence,
@@ -148,10 +166,14 @@ selected row (`xsel`), Esc closes without copying.
 - Confidence sort needs `LC_ALL=C sort -g`: under the ru locale GNU sort
   expects comma decimals, parses `0.655816` as 0 and `-r` then silently
   *reverses* the untouched order (verified with the same fixture both ways).
-- Results move via `$TRANSLATE_ROWS` (`mktemp -d`, removed on exit), so
-  `tv translate` standalone is meaningless (`cat` of unset var → error
-  row). Headless checks: `TRANSLATE_TEST=1` prints rows instead of opening
-  tv, `TRANSLATE_FIXTURE=file.json` feeds
+- Results move via `$TRANSLATE_ROWS` — a fixed cache path
+  (`~/.cache/tv-translate/rows`, overwritten per run): the rows must
+  outlive the prompting process because the reader (`cat` in the menu
+  window) lives elsewhere, so `mktemp` + EXIT trap is no longer an
+  option. `tv translate` standalone is still meaningless (`cat` of unset
+  var → error row). Headless checks: `TRANSLATE_TEST=1` prints rows plus
+  the exact `--send` line instead of handing over,
+  `TRANSLATE_FIXTURE=file.json` feeds
   saved web JSON (skips the network).
 - Clipboard input goes through the same D-Bus `Manager.Get` as
   `clipboard-preview.sh` (newlines collapse to spaces before the request);
@@ -244,8 +266,9 @@ path outside `$HOME/Downloads/`, so it can never touch anything.
 - Rename is a `read -e -i` one-liner pre-filled with the name minus a
   ` (N)` duplicate suffix. `read -e` does *not* select the pre-fill:
   typing appends to it, so the prompt spells out Enter / Ctrl-U /
-  empty / Ctrl-C, and the script binds `ESC w`/`ESC u` like
-  translate.sh (see the menu-window note above). An empty reply keeps
+  empty / Ctrl-C, and the script binds `ESC w`/`ESC u` — unlike the
+  Translate/web-search prompts this one runs in the menu window
+  (see the menu-window note above). An empty reply keeps
   the original name; a destination collision never overwrites — the
   loop re-prompts with an auto-bumped `name (N).ext`; `/`-containing,
   `.` and `..` names are rejected.

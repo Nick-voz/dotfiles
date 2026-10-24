@@ -58,22 +58,29 @@ window's busy/done events in `menu.lua`).
 
 ## Menu window
 
-One dedicated kitty window (`WM_CLASS=menu`, `menu.service` in
-`graphical-apps.target`) stays alive for the whole session and is kept
-hidden by awesome — `hidden` in the rule is applied on `manage`, i.e. before
-the first map, so the window never flashes at spawn.
+Two dedicated kitty windows stay alive for the whole session, kept hidden
+by awesome — `hidden` in the rule is applied on `manage`, i.e. before the
+first map, so the windows never flash at spawn: `WM_CLASS=menu`
+(`menu.service`) runs the tv flows, `WM_CLASS=input` (`input.service`)
+runs raw-text prompts in a class xremap leaves alone (see `Translate` and
+`Web search` in `tv/AGENTS.md`).
 
 ### The two sides
 
 - `menu.lua` (WM side): show, `request::activate`, hide, autoclose on
   `unfocus`, ignore-while-busy, `systemctl --user start`/`restart` when the
-  window is gone. systemd owns spawning, lua must not, or two servers would
-  race on the FIFO.
+  window is gone — all keyed by WM_CLASS (`menu`/`input`), so a new server
+  window is one rule + one unit. `event(name, 'busy')` also re-shows a
+  *hidden* window: helpers whose prompts run in the input window hand their
+  result to the menu with `scripts/menu --send` and this is what pops the
+  menu again (`tv/AGENTS.md`). systemd owns spawning, lua must not, or two
+  servers would race on the FIFO.
 - `scripts/menu` (terminal side): blocks on the FIFO
-  `$XDG_RUNTIME_DIR/awesome-menu/request`, runs the command on the pty and
-  reports back with `awesome-client "require('menu').event('busy'|'done',
-  rc)"` — arbitrary X properties emit no signal in awesome, so this is the
-  only reverse channel.
+  `$XDG_RUNTIME_DIR/awesome-<class>/request` (`--class NAME`, default
+  `menu`), runs the command on the pty and reports back with
+  `awesome-client "require('menu').event('<class>', 'busy'|'done', rc)"` —
+  arbitrary X properties emit no signal in awesome, so this is the only
+  reverse channel.
 
 ### Environment
 
@@ -94,15 +101,16 @@ shows the env from `exec`, so sourced variables are invisible there.
 
 A request is two lines: mode + command. `menu --send "<cmd>"` queues a
 follow-up, which is how the `menu` channel chains menu → brightness → …
-into one window instead of spawning a kitty per step. After a command exits
+into one window instead of spawning a kitty per step; `--class input`
+targets the prompt window with the same handshake. After a command exits
 the wrapper peeks the FIFO for 50ms: a queued follow-up is found instantly
 and the window stays up; an empty FIFO only costs the 50ms right before the
 window hides anyway.
 
 tv is not special-cased (tv renders on stderr), and menu-like channels only
-chain *terminal* follow-ups that end where they started (a tv channel,
-`read`). GTK apps get their own `setsid kitty` window, and so do
-`apps`/`bookmarks` (launchers, not flows).
+chain *terminal* follow-ups that end where they started (a tv channel, a
+`read` prompt in the input window). GTK apps get their own `setsid kitty`
+window, and so do `apps`/`bookmarks` (launchers, not flows).
 
 Which tv channels run in the window and their status bar config:
 `tv/AGENTS.md`. Editor-window and xremap class details: also there and in
@@ -146,6 +154,12 @@ Which tv channels run in the window and their status bar config:
 
 ### Traps
 
+- The server waits on the FIFO, never on stdin, between commands — so
+  keystrokes typed while no `read` is running (after a prompt submitted,
+  during a fetch) pile up in the pty queue and the *next* command eats them
+  instantly: a stale Enter auto-submits an empty line and the prompt looks
+  like it "died by itself". `run: $cmd` is preceded by a raw-mode flush of
+  pending input.
 - The lock and FIFO fds must be closed for the command:
   `bash -c "$cmd" 9>&- 3<&-`. Any descendant that outlives the request (an
   editor window, `xsel` serving a selection, a daemon) inherits them and
@@ -159,8 +173,23 @@ Which tv channels run in the window and their status bar config:
   EOF).
 - `awful.rules` documents an `ontop` property that does not exist in 4.3 —
   use `above`.
-- `menu --send` falls back to a throwaway `kitty --class tv` window when
-  no server holds the lock, so the channels keep working without the unit.
+- Three keys close a prompt window and take the server down with it: the
+  global conf's `ctrl+w` (`close_tab`) and kitty's built-in defaults
+  `ctrl+shift+w` (`close_window`) / `ctrl+shift+q` (`close_tab`) — a
+  shift still held from typing rolls the ctrl+w word-rubout into
+  `ctrl+shift+w`; the window closes, the server sees the pty SIGHUP,
+  `exit 0`s, and systemd restarts it 100ms later ("the prompt dies
+  while erasing"). The units and the throwaway spawn neutralize all
+  three via `-o` (both ctrl+w maps → word-rubout, ctrl+shift+q →
+  `no_op`). The HUP/TERM traps log the signal name and whether kitty
+  was still alive (`got HUP (kitty alive)` = closed from the inside,
+  i.e. a keybind), so deaths are diagnosable from `server.log` alone.
+- `menu --send` falls back to a throwaway window when no server holds the
+  lock, so the channels keep working without the units: `--class tv` for
+  menu (floating, tv keymaps), plain `kitty` for input (an `input` window
+  would be hidden by its rule; plain is the keymap class input mimics);
+  the throwaway carries the units' three closing-key `-o` overrides
+  itself.
 
 ### How it replaced the old tv windows
 

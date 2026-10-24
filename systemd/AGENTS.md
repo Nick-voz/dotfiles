@@ -1,9 +1,10 @@
 # systemd — user units
 
 All user units live here (`~/.config/systemd/user/`): `clipcat`, `discord`,
-`firefox`, `menu`, `obsidian`, `picom`, `steam`, `superproductivity`,
-`telegram`, `throne`, `udisksie`, `xremap`, `nextcloud-sync@.service` +
-timers, and the targets `graphical-login.target` / `graphical-apps.target`.
+`firefox`, `input`, `menu`, `obsidian`, `picom`, `steam`,
+`superproductivity`, `telegram`, `throne`, `udisksie`, `xremap`,
+`nextcloud-sync@.service` + timers, and the targets `graphical-login.target`
+/ `graphical-apps.target`.
 
 Enablement state (`*.target.wants/`) is machine-local and gitignored.
 
@@ -43,9 +44,9 @@ No in-`rc.lua` autostart of system services; two phases:
   activated as a dependency (`Requires=` in the wrapper), never via
   `systemctl start` directly.
 - **GUI apps** (throne, telegram, discord, steam, superproductivity,
-  firefox, obsidian, menu): units `WantedBy=graphical-apps.target`, started
-  by a hook at the end of `rc.lua` (package `awesome`) so they never race
-  WM init (cursor theme, EWMH, tray).
+  firefox, obsidian, menu, input): units `WantedBy=graphical-apps.target`,
+  started by a hook at the end of `rc.lua` (package `awesome`) so they
+  never race WM init (cursor theme, EWMH, tray).
 
 ## Restart policy
 

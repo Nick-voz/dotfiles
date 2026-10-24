@@ -3,18 +3,24 @@ local gears = require("gears")
 
 local menu = {}
 
-menu.class = "menu"
-menu.service = "menu.service"
-menu.runtime_dir = (os.getenv("XDG_RUNTIME_DIR") or "/tmp") .. "/awesome-menu"
-menu.fifo = menu.runtime_dir .. "/request"
+-- Prewarmed server windows, keyed by WM_CLASS: "menu" (tv flows) and
+-- "input" (raw text prompts; a class xremap treats as a plain terminal).
+local window_names = { menu = true, input = true }
 
-local pending -- request waiting for the window to come up
-local busy = false
-local mode = "auto"
+local state = {} -- per name: { busy, mode, pending }
 
-local function find_client()
+local function st(name)
+	local s = state[name]
+	if not s then
+		s = { name = name, busy = false, mode = "auto", pending = nil }
+		state[name] = s
+	end
+	return s
+end
+
+local function find_client(name)
 	for _, c in ipairs(client.get()) do
-		if c.class == menu.class then
+		if c.class == name then
 			return c
 		end
 	end
@@ -24,8 +30,12 @@ local function shell_quote(s)
 	return "'" .. s:gsub("'", "'\\''") .. "'"
 end
 
-local function hide(c)
-	c = c or find_client()
+local function runtime_dir(name)
+	return (os.getenv("XDG_RUNTIME_DIR") or "/tmp") .. "/awesome-" .. name
+end
+
+local function hide(s, c)
+	c = c or find_client(s.name)
 	if c and not c.hidden then
 		c.hidden = true
 	end
@@ -36,7 +46,7 @@ local function activate(c)
 	c:emit_signal("request::activate", "menu", { raise = true })
 end
 
-local function send(cmd, request_mode)
+local function send(s, cmd, request_mode)
 	awful.spawn({
 		"sh",
 		"-c",
@@ -44,42 +54,45 @@ local function send(cmd, request_mode)
 			"printf '%%s\\n%%s\\n' %s %s > %s",
 			shell_quote(request_mode),
 			shell_quote(cmd),
-			shell_quote(menu.fifo)
+			shell_quote(runtime_dir(s.name) .. "/request")
 		),
 	}, false)
 end
 
-local function request_window(cmd, request_mode, action)
-	pending = { cmd = cmd, mode = request_mode }
-	awful.spawn({ "systemctl", "--user", action, "--no-block", menu.service }, false)
-	local request = pending
+local function request_window(s, cmd, request_mode, action)
+	s.pending = { cmd = cmd, mode = request_mode }
+	awful.spawn({ "systemctl", "--user", action, "--no-block", s.name .. ".service" }, false)
+	local request = s.pending
 	gears.timer.start_new(3, function()
-		if pending == request then
-			pending = nil
+		if s.pending == request then
+			s.pending = nil
 		end
 	end)
 end
 
-function menu.open(cmd, request_mode)
+function menu.open(cmd, request_mode, name)
 	request_mode = request_mode or "auto"
+	name = name or "menu"
 
-	local c = find_client()
+	local s = st(name)
+	s.name = name
+	local c = find_client(name)
 
-	if busy then
+	if s.busy then
 		if c and not c.hidden then
 			return
 		end
 
-		request_window(cmd, request_mode, "restart")
+		request_window(s, cmd, request_mode, "restart")
 		return
 	end
 
 	if not c then
-		request_window(cmd, request_mode, "start")
+		request_window(s, cmd, request_mode, "start")
 		return
 	end
 
-	busy, mode = true, request_mode
+	s.busy, s.mode = true, request_mode
 	c.sticky = true
 	if resize then
 		resize(c) -- the screen may have changed while the window was hidden
@@ -91,36 +104,47 @@ function menu.open(cmd, request_mode)
 			activate(c)
 		end
 	end)
-	send(cmd, request_mode)
+	send(s, cmd, request_mode)
 end
 
--- Called by the wrapper through awesome-client.
-function menu.event(what, rc)
+-- Called by the wrappers through awesome-client.
+function menu.event(name, what, rc)
+	local s = st(name)
+	s.name = name
 	if what == "busy" then
-		busy = true
+		s.busy = true
+		-- an external `scripts/menu --send` (a helper finishing in another
+		-- window) finds this one hidden: reopen it for the result
+		local c = find_client(name)
+		if c and c.hidden then
+			if resize then
+				resize(c)
+			end
+			c.hidden = false
+			activate(c)
+		end
 	elseif what == "done" then
-		busy = false
-		if mode ~= "hold" then
-			hide()
+		s.busy = false
+		if s.mode ~= "hold" then
+			hide(s)
 		end
 	end
 end
 
 client.connect_signal("unfocus", function(c)
-	if c.class == menu.class then
-		hide(c)
+	if window_names[c.class] then
+		hide(st(c.class), c)
 	end
 end)
 
 tag.connect_signal("property::selected", function()
-	local c = find_client()
-	if c then
-		hide(c)
+	for name in pairs(window_names) do
+		hide(st(name))
 	end
 end)
 
 client.connect_signal("manage", function(c)
-	if c.class ~= menu.class then
+	if not window_names[c.class] then
 		return
 	end
 
@@ -128,20 +152,23 @@ client.connect_signal("manage", function(c)
 	c.sticky = true
 	c.hidden = true
 
-	if pending then
+	local s = st(c.class)
+	s.name = c.class
+	if s.pending then
 		gears.timer.start_new(0.1, function()
-			local request = pending
-			pending = nil
+			local request = s.pending
+			s.pending = nil
 			if request then
-				menu.open(request.cmd, request.mode)
+				menu.open(request.cmd, request.mode, c.class)
 			end
 		end)
 	end
 end)
 
 client.connect_signal("unmanage", function(c)
-	if c.class == menu.class then
-		busy = false
+	local s = state[c.class]
+	if window_names[c.class] and s then
+		s.busy = false
 	end
 end)
 
