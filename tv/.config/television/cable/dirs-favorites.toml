@@ -1,0 +1,12 @@
+[metadata]
+name = "dirs-favorites"
+description = "Child dirs of the favorite prefixes (edit PREFIXES in scripts/dirs-favorites.sh); Enter prints the picked path"
+requirements = ["fd"]
+
+[source]
+command = "$HOME/.config/television/scripts/dirs-favorites.sh"
+no_sort = true
+frecency = false
+
+[preview]
+command = "ls -la --color=always '{}'"

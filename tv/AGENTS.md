@@ -178,6 +178,19 @@ alone (see `xremap/AGENTS.md`). The path is handed over as
 `bash -c 'exec "$EDITOR" "$1"' _ <path>` so spaces and quotes need no
 escaping, and the window closes when the editor exits.
 
+## Dirs favorites
+
+`tv dirs-favorites` is standalone (not a menu step): its source is
+`scripts/dirs-favorites.sh`, whose `PREFIXES` array is the whole
+maintenance surface — one favorite prefix per line, missing ones are
+skipped. Each prefix's immediate child dirs are listed
+(`fd -t d --max-depth 1`), in prefix order (`no_sort`, `frecency = false`).
+
+- No action is bound, so Enter prints the picked path to stdout — the
+  channel composes: `cd "$(tv dirs-favorites)"`, hotkeys, scripts.
+- It runs in a plain terminal, not the menu window, so it keeps the
+  status bar (see Channels and the menu window above).
+
 ## stow-target.sh
 
 A picked path inside the repo is run through `scripts/stow-target.sh`,
