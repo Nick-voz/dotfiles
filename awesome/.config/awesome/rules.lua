@@ -91,7 +91,20 @@ awful.rules.rules = {
 		properties = { floating = true },
 		callback = resize,
 	},
-	{ rule = { class = "Soffice" }, properties = { floating = true }, callback = resize },
+	-- All LO windows have class "Soffice" when managed (the app re-classes
+	-- the document frame to "libreoffice-writer" only after mapping), so
+	-- split by window type: the app window opens filling the screen,
+	-- in-app dialogs/menus keep floating + resized.
+	{
+		rule = { class = "Soffice", type = "normal" },
+		properties = { floating = false, maximized = true },
+	},
+	{
+		rule = { class = "Soffice" },
+		except = { type = "normal" },
+		properties = { floating = true },
+		callback = resize,
+	},
 	{ rule = { class = "Xdg-desktop-portal-gtk" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "tv" }, properties = { floating = true, focus = true }, callback = resize },
 	-- Prewarmed menu terminal (menu.service). Kept hidden for the whole

@@ -25,6 +25,24 @@ or "New Private Browsing Window" (about:newtab changes the title too and
 would steal focus for a page that is not there). The handover for a real
 page simply happens once its title lands.
 
+## LibreOffice rules
+
+At manage time every LO window is class `Soffice`; the document frame
+re-classes to `libreoffice-writer` etc. only after mapping — too late for
+rules. So `rules.lua` splits office windows by window `type`:
+
+- `type = "normal"` (document frames, Start Center): `floating = false`,
+  `maximized = true` — the app fills the work area on open. Setting
+  `floating = false` explicitly is required: LO maps its frame with its own
+  geometry hints and awesome auto-floats such windows.
+- everything else (`except`, dialogs like Tip-of-the-Day/Options):
+  unchanged `floating = true` + `resize` callback — small and centered.
+  Dropdown menus are override-redirect: never managed, rules don't apply.
+
+Both rules must stay mutually exclusive: awful.rules merges properties of
+all matching rules but runs *every* matching rule's callback — a layered
+"catch then override" would still resize the app window.
+
 ## Notifications
 
 **Awesome is the notification daemon** — there is no dunst/notify-send
