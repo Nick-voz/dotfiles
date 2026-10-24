@@ -4,6 +4,10 @@
 vim.keymap.set("n", "<leader>wf", "<cmd>w<CR>", { desc = "write file" })
 vim.keymap.set("n", "<leader>wa", "<cmd>wa<CR>", { desc = "write all" })
 
+-- ZD is Vim's built-in "close window without saving in diff mode"; safe to
+-- override — diffs here go through diffview, which has its own keys.
+vim.keymap.set("n", "ZD", "<cmd>q!<CR>", { desc = "close without saving" })
+
 vim.keymap.set("n", "<leader>rf", "<cmd>!python3 %<CR>", { desc = "run curent file through python" })
 vim.keymap.set(
   "n",
