@@ -9,10 +9,10 @@ keymap:
       Ctrl-Left: Home
       Ctrl-Right: End
 
-  - name: Obsidian — gtk-like keybindings
+  - name: Universal navigation — gtk-style cursor keys (all apps except kitty, tv/menu)
     exact_match: true
     application:
-      only: ["/obsidian/", "/superproductivity/", "/Telegram/"]
+      not: [/kitty/, tv.tv, menu.menu]
     remap:
       Shift-Alt-Left: Ctrl-Shift-Left
       Shift-Alt-Right: Ctrl-Shift-Right
@@ -32,13 +32,6 @@ keymap:
       Ctrl-Down: Ctrl-End
       Alt-BackSpace: Ctrl-BackSpace
       Alt-Delete: Ctrl-Delete
-      Ctrl-BackSpace: [Shift-Home, BackSpace]
-
-  - name: Ctrl+Backspace — delete to line start, or newline if at BOL (all apps except kitty)
-    exact_match: true
-    application:
-      not: [/kitty/, /obsidian/]
-    remap:
       Ctrl-BackSpace: [Shift-Home, BackSpace]
 
   - name: Win+C/V/X/Z → Ctrl+C/V/X/Z (all apps except kitty)
