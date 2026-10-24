@@ -91,10 +91,6 @@ awful.rules.rules = {
 		properties = { floating = true },
 		callback = resize,
 	},
-	-- All LO windows have class "Soffice" when managed (the app re-classes
-	-- the document frame to "libreoffice-writer" only after mapping), so
-	-- split by window type: the app window opens filling the screen,
-	-- in-app dialogs/menus keep floating + resized.
 	{
 		rule = { class = "Soffice", type = "normal" },
 		properties = { floating = false, maximized = true },
@@ -107,28 +103,8 @@ awful.rules.rules = {
 	},
 	{ rule = { class = "Xdg-desktop-portal-gtk" }, properties = { floating = true }, callback = resize },
 	{ rule = { class = "tv" }, properties = { floating = true, focus = true }, callback = resize },
-	-- Prewarmed menu terminal (menu.service). Kept hidden for the whole
-	-- session: a hotkey shows it and scripts/menu hides it again once the
-	-- command it runs is done. Sticky so it can be shown from any tag, above
-	-- so it is not buried under other windows while a step is running.
 	{
-		rule = { class = "menu" },
-		properties = {
-			floating = true,
-			sticky = true,
-			above = true,
-			skip_taskbar = true,
-			hidden = true,
-		},
-		callback = resize,
-	},
-	-- Prewarmed input server (input.service): raw text prompts run in it.
-	-- Same hidden-float lifecycle as the menu; it needs its own WM_CLASS
-	-- because xremap hands menu/tv classes' word/line kills to tv, while
-	-- input.input is excluded from every GUI rule and stays a terminal
-	-- (tv/AGENTS.md, xremap/AGENTS.md).
-	{
-		rule = { class = "input" },
+		rule_any = { class = { "menu", "input" } },
 		properties = {
 			floating = true,
 			sticky = true,
