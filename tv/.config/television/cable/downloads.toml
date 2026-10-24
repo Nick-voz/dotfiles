@@ -1,31 +1,56 @@
 [metadata]
 name = "downloads"
-description = "Browse recent files in Downloads folder"
-requirements = ["fd", "bat"]
+description = "~/Downloads, newest first: enter opens, ctrl-d deletes, ctrl-m moves (rename), ctrl-y copies the path; clear-all is under ctrl-x"
+requirements = ["find", "numfmt", "xsel", "xdg-open", "notify-send"]
 
 [source]
-command = "fd -t f . ~/Downloads 2>/dev/null | head -200"
+command = "$HOME/.config/television/scripts/downloads-list.sh"
+display = "{split:\\t:1}  {split:\\t:2}  {split:\\t:3}"
+output = "{split:\\t:0}"
+no_sort = true
+frecency = false
 
 [preview]
-command = "bat -n --color=always '{}' 2>/dev/null || file '{}'"
-env = { BAT_THEME = "ansi" }
+command = "\"$HOME/.config/television/scripts/downloads-preview.sh\" '{split:\\t:0}'"
+
+[ui.preview_panel]
+header = "{split:\\t:1}"
+
+[ui.status_bar]
+hidden = true
 
 [keybindings]
 enter = "actions:open"
 ctrl-d = "actions:delete"
 ctrl-m = "actions:move"
+ctrl-y = "actions:copy_path"
 
 [actions.open]
-description = "Open the selected file with default application"
-command = "xdg-open '{}' 2>/dev/null || open '{}'"
-mode = "fork"
+description = "Open with the default app, then refresh the list"
+command = "\"$HOME/.config/television/scripts/downloads-open.sh\" '{split:\\t:0}'"
+shell = "bash"
+mode = "execute"
 
 [actions.delete]
-description = "Delete the selected file"
-command = "rm -i '{}'"
+description = "Remove the entry (rm, no trash), then refresh the list"
+command = "\"$HOME/.config/television/scripts/downloads-delete.sh\" '{split:\\t:0}'"
+shell = "bash"
 mode = "execute"
 
 [actions.move]
-description = "Move the selected file to current directory"
-command = "mv '{}' ."
-mode = "fork"
+description = "Move into a favorite dir, with an optional rename"
+command = "\"$HOME/.config/television/scripts/downloads-move.sh\" '{split:\\t:0}'"
+shell = "bash"
+mode = "execute"
+
+[actions.copy_path]
+description = "Copy the file path to the clipboard"
+command = "printf '%s' '{split:\\t:0}' | xsel --clipboard --input"
+shell = "bash"
+mode = "execute"
+
+[actions.clear_all]
+description = "Delete everything in ~/Downloads (hidden partials included) after confirmation"
+command = "$HOME/.config/television/scripts/downloads-clear.sh"
+shell = "bash"
+mode = "execute"

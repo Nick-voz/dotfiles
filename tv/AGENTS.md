@@ -3,6 +3,11 @@
 Television terminal viewer with extensive channel configs under
 `.config/television/cable/`, scripts under `.config/television/scripts/`.
 
+`stow tv` deployed this package folded: `~/.config/television` is one
+symlink onto the package dir (the trap from `systemd/AGENTS.md`), so repo
+edits are the live config — nothing to re-stow, and `stow -u tv` would
+take the whole directory with it.
+
 ## Channels and the menu window
 
 Everything menu-like opens in the prewarmed menu window (mechanics in
@@ -27,6 +32,7 @@ the line. Every other channel keeps the status bar.
 `tv media` deliberately lists the canonical `/run/media/$USER` rather than
 `~/Media`, so that deleting the symlink cannot silently break it (see
 `udiskie/AGENTS.md`); "poweroff" of a drive is `tv media` → `ctrl-d`.
+
 
 ## Channel commands are templates
 
@@ -201,6 +207,48 @@ skipped. Each prefix's immediate child dirs are listed
   channel composes: `cd "$(tv dirs-favorites)"`, hotkeys, scripts.
 - It runs in a plain terminal, not the menu window, so it keeps the
   status bar (see Channels and the menu window above).
+
+## Downloads channel
+
+`tv downloads` lists the first-level entries (files and dirs) of
+~/Downloads, newest first: `downloads-list.sh` prints
+`path<TAB>name<TAB>size<TAB>date` and the channel's `display`/`output`
+templates pick the fields — the path prefix never shows, actions get
+`{split:\t:0}`. Dirs print `-` as size (a `du` would slow the listing);
+dotfiles are skipped, so an in-progress `.part`/`.crdownload` never
+appears. `downloads-preview.sh` dispatches by mime (bat/eza/unzip/tar/
+7z/identify/ffprobe/pdftotext); tv's "no output" placeholder row
+previews as one line, and every action script starts by rejecting a
+path outside `$HOME/Downloads/`, so it can never touch anything.
+
+- Keys: enter = `xdg-open`, ctrl-d = delete, ctrl-m = move, ctrl-y =
+  copy path; ctrl-o stays tv's global `toggle_preview` (enter already
+  opens). The channel's `ctrl-y` overrides the global
+  `copy_entry_to_clipboard`, which would paste the raw tab-joined row
+  instead of the path. `clear_all` is deliberately unbound — ctrl-x
+  only.
+- Delete is plain `rm -rf` (no trash flow, by design); a mutating
+  action ends with `exec tv downloads` guarded by `[ -t 1 ]`, which
+  takes over the same menu window (execute mode already gave the
+  terminal back — the handoff media.toml uses for `yazi '{}'`), so
+  delete → refreshed list → delete makes a cleanup session; the
+  refreshed list is the feedback, plus a small notify-send.
+- `clear_all` prompts `[y/N]` with the count of first-level entries
+  **including** the hidden partials it also removes; "y" empties the
+  dir and closes the menu window (nothing left to browse), anything
+  else reopens the list.
+- Move targets come from a nested `tv dirs-favorites` in the same
+  window — its child dirs *are* the intended targets, the prefixes
+  themselves are deliberately not offered (Esc there = exit 0 with
+  empty stdout → cancel back to the list).
+- Rename is a `read -e -i` one-liner pre-filled with the name minus a
+  ` (N)` duplicate suffix. `read -e` does *not* select the pre-fill:
+  typing appends to it, so the prompt spells out Enter / Ctrl-U /
+  empty / Ctrl-C, and the script binds `ESC w`/`ESC u` like
+  translate.sh (see the menu-window note above). An empty reply keeps
+  the original name; a destination collision never overwrites — the
+  loop re-prompts with an auto-bumped `name (N).ext`; `/`-containing,
+  `.` and `..` names are rejected.
 
 ## stow-target.sh
 
