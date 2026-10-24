@@ -17,7 +17,8 @@ phase driven from `~/.xprofile` — full unit picture in `systemd/AGENTS.md`.
 
 Any firefox window title change jumps to that window — `property::name`
 in `rc.lua`: `first_tag:view_only()`, focus, raise. That is how pages
-opened via `tv bookmarks` / `web-search.sh` hand the user over.
+opened via `tv bookmarks` / `web-search.sh` / `translate.sh` hand the user
+over.
 
 Filter: no grab for the empty tab page — titles starting with "New Tab"
 or "New Private Browsing Window" (about:newtab changes the title too and

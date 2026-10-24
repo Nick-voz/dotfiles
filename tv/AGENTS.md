@@ -9,13 +9,15 @@ Everything menu-like opens in the prewarmed menu window (mechanics in
 `awesome/AGENTS.md`), not a fresh kitty. Brightness, clipboard (clipcat via
 `tv clipboard`), power and wifi live in tv channels. Firefox bookmarks are
 `tv bookmarks` (foxmarks + xdg-open), launched from `tv menu`. Web search is
-the `web-search.sh` helper, launched from `tv menu`.
+the `web-search.sh` helper, launched from `tv menu`. Translate is the
+`translate.sh` helper, launched from `tv menu` (see Translate below).
 
 The channels that run *in* the menu window — `menu`, `apps`, `bookmarks`
 and `power` (the `Mod4` hotkeys go through `menu.open`), plus the steps
 `menu` chains into it with `--send` and the ones the helper scripts run
-there (`brightness`, `clipboard`, `media`, `web-search`, `dirs-config`,
-`files-obsidian`) — all set `[ui.status_bar] hidden = true`, because that
+there (`brightness`, `clipboard`, `media`, `web-search`, `translate`,
+`dirs-config`, `files-obsidian`) — all set
+`[ui.status_bar] hidden = true`, because that
 bottom line is nothing but hints (`CHANNEL menu | Remote Control: ctrl-t •
 Actions: ctrl-x • Help: ctrl-h | v0.15.9`) and `hidden` is the only way to
 drop it: `StatusBarConfig` carries `hidden` and the two separators and
@@ -85,6 +87,58 @@ punctuation).
   `text/uri-list` to `text/plain` on capture (verified via `clipcatctl
   load`), so they land in the plain text branch.
 - Dependencies: busctl (systemd), jq, python3, bat.
+
+## Translate
+
+`tv menu` → Translate → `scripts/translate.sh` runs in the menu window:
+prompts for a query (empty Enter = latest clipcat entry), translates via
+Google and reopens the result as `tv translate` there; Enter copies the
+selected row (`xsel`), Esc closes without copying.
+
+- One request serves both modes: `translate_a` with `dt=t&dt=bd` yields a
+  word's dictionary (`.[1]`: POS groups, per-word confidence,
+  back-translations) and a text's segment translations (`.[0]`).
+  The web client `gtx` gets the anti-bot "Sorry" HTML from this IP and
+  `tw-ob`/most other clients answer 429 under hammering; `client=at`
+  served the same rich dictionary payload until ~15 rapid calls blocked it
+  for a long window (no `Retry-After` header; see throttles below).
+- Fallback chain: `at` → `tw-ob` (both `translate_a`, dictionary-capable) →
+  v2 REST (`translation.googleapis.com`) with the public web-frontend key
+  (override `GOOGLE_TRANSLATE_KEY`, `.env`-able) → open
+  `translate.google.com?text=…` in firefox as last resort (the old flow).
+- `translate_a` throttles are not quick: after a burst of ~15 calls the
+  clients stayed 429 (or HTML-block) for 45+ min, while REST never blocked.
+  So REST alone is the common degraded path for words — hence
+  `wiki_variants()`: a single-word query with empty dictionary pulls
+  variants from Wiktionary (`*-wiktionary.org` `action=parse&prop=wikitext`,
+  never rate-limited): `{{t+|ru|word}}` lines on the en wiki, `|en=[[..]]`
+  lines under `=== Перевод ===` on the ru wiki. The combined-grave accent
+  (U+0301) in lemma entries is stripped as raw bytes `tr -d '\314\201'`.
+  Rows are plain words (Google's translation first, then variants), fields
+  1–2 left empty — the UI carries no `main`/`wikt` labels by design.
+  Gotcha: the JSON value lives at `.parse.wikitext["*"]`, not `.value`.
+- The UI shows no engine/source annotations: only the compact direction
+  lands in the tv input title (`--input-header "$hdr"`, `En → Ru`), built
+  from `det` (heuristic as fallback) and `tl`.
+- Direction: Cyrillic → `tl=en`, else `tl=ru`; `sl=auto` reports the real
+  source at `.[2]` and a wrong heuristic (`det == tl`) is retried once
+  against the other language.
+- Script↔channel contract: three `\t` fields — word rows
+  `target<TAB>pos<TAB>backtranslations` (top 12 by confidence), text rows
+  `translation<TAB>source<TAB>`; the channel keeps `no_sort`, copy takes
+  field 0. The preview panel is hidden (`[ui.preview_panel] hidden`): rows
+  are the whole UI, so nothing gets formatted twice.
+- Confidence sort needs `LC_ALL=C sort -g`: under the ru locale GNU sort
+  expects comma decimals, parses `0.655816` as 0 and `-r` then silently
+  *reverses* the untouched order (verified with the same fixture both ways).
+- Results move via `$TRANSLATE_ROWS` (`mktemp -d`, removed on exit), so
+  `tv translate` standalone is meaningless (`cat` of unset var → error
+  row). Headless checks: `TRANSLATE_TEST=1` prints rows instead of opening
+  tv, `TRANSLATE_FIXTURE=file.json` feeds
+  saved web JSON (skips the network).
+- Clipboard input goes through the same D-Bus `Manager.Get` as
+  `clipboard-preview.sh` (newlines collapse to spaces before the request);
+  `clipcatctl get` stays unusable here.
 
 ## Edit config / Edit obsidian
 

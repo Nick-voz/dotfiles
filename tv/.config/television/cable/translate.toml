@@ -1,0 +1,26 @@
+[metadata]
+name = "translate"
+description = "Translation results exported by scripts/translate.sh (rows via $TRANSLATE_ROWS)"
+requirements = ["xsel"]
+
+[source]
+command = 'cat "$TRANSLATE_ROWS"'
+display = "{split:\\t:0}    {split:\\t:1}    {split:\\t:2}"
+output = "{split:\\t:0}"
+no_sort = true
+frecency = false
+
+[ui.preview_panel]
+hidden = true
+
+[ui.status_bar]
+hidden = true
+
+[keybindings]
+enter = "actions:copy"
+
+[actions.copy]
+description = "Copy the selected translation to the clipboard"
+command = "printf '%s' '{split:\\t:0}' | xsel --clipboard --input"
+shell = "bash"
+mode = "execute"
