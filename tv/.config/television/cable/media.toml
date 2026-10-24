@@ -14,7 +14,7 @@ command = "df -h '{}' | tail -n 1 && echo && ls -la --color=always '{}' 2>/dev/n
 
 [keybindings]
 enter = "actions:browse"
-ctrl-e = "actions:eject"
+ctrl-d = "actions:eject"
 ctrl-u = "actions:unmount"
 
 [ui.status_bar]

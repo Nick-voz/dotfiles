@@ -58,7 +58,7 @@ resolve `inode/directory` through `mimeapps.list`.
 3. The physical unplug is not udiskie's to handle: udisks2 drops the
    mount when the device disappears, and powering the drive off is only
    meaningful *before* unplugging, which is why "poweroff" lives in
-   `tv media` → `ctrl-e` and not in a removal hook.
+   `tv media` → `ctrl-d` and not in a removal hook.
 4. Nothing internal gets mounted, and that is udiskie's builtin rules,
    not ours: they drop non-external toplevel devices, the root filesystem,
    loop devices and the docker mapper symlinks, and a catch-all rule that

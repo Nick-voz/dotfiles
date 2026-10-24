@@ -24,7 +24,7 @@ the line. Every other channel keeps the status bar.
 
 `tv media` deliberately lists the canonical `/run/media/$USER` rather than
 `~/Media`, so that deleting the symlink cannot silently break it (see
-`udiskie/AGENTS.md`); "poweroff" of a drive is `tv media` → `ctrl-e`.
+`udiskie/AGENTS.md`); "poweroff" of a drive is `tv media` → `ctrl-d`.
 
 ## Channel commands are templates
 
