@@ -38,6 +38,41 @@ vim.keymap.set("v", "<A-Up>", ":m '<-2<CR>==gv", { silent = true, desc = "Move s
 vim.keymap.set("v", "<A-Down>", ":m '>+1<CR>==gv", { silent = true, desc = "Move selection down" })
 
 vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>", { desc = "Open neogit" })
+
+-- Tabs: no tabline (see options.lua), no <leader><tab>; managed through
+-- the <leader>t group and the picker on <leader>ft. config/tabs.lua holds
+-- the picker. This file loads after LazyVim's defaults, so unsetting here works.
+local Tabs = require("config.tabs")
+for _, lhs in ipairs({
+  "<leader><tab>",
+  "<leader><tab><tab>",
+  "<leader><tab>[",
+  "<leader><tab>]",
+  "<leader><tab>d",
+  "<leader><tab>f",
+  "<leader><tab>l",
+  "<leader><tab>o",
+  "<leader>fT",
+}) do
+  pcall(vim.keymap.del, "n", lhs)
+end
+vim.keymap.set("n", "<leader>t", "", { desc = "tabs" })
+vim.keymap.set("n", "<leader>tn", "<cmd>tabnew<cr>", { desc = "New Tab" })
+vim.keymap.set("n", "<leader>tw", "<cmd>tabclose<cr>", { desc = "Close Tab" })
+vim.keymap.set("n", "<leader>to", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
+vim.keymap.set("n", "<leader>ft", Tabs.pick, { desc = "Find Tabs" })
+-- Terminals moved out of <leader>f (now free for the tabs picker) into the tabs group
+vim.keymap.set("n", "<leader>tt", function()
+  Snacks.terminal(nil, { cwd = LazyVim.root() })
+end, { desc = "Terminal (Root Dir)" })
+vim.keymap.set("n", "<leader>tT", function()
+  Snacks.terminal()
+end, { desc = "Terminal (cwd)" })
+
+-- Tabline toggle moved from <leader>uA to <leader>ut: the tabline is hidden
+-- by default (showtabline = 0), this is the escape hatch to bring it back.
+pcall(vim.keymap.del, "n", "<leader>uA")
+Snacks.toggle.option("showtabline", { off = 0, on = 2, name = "Tabline" }):map("<leader>ut")
 local opts = { noremap = true, silent = true }
 vim.keymap.set("i", "<C-BS>", "<C-w>", opts)
 vim.keymap.set("i", "<M-BS>", "<C-w>", opts)

@@ -3,6 +3,9 @@
 -- Add any additional options here
 
 vim.opt.scrolloff = 999
+
+-- tabs never get a line of their own; use <leader>ft picker (config/tabs.lua)
+vim.opt.showtabline = 0
 vim.g.snacks_animate = false
 
 vim.opt.spell = true
