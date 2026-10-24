@@ -501,6 +501,12 @@ $endfor$
 \fi
 $endif$
 $--
+$-- Russian caption labels; after babel loads so it wins over \captions<lang>
+$--
+\AtBeginDocument{%
+  \renewcommand{\figurename}{Рис.}%
+}
+$--
 $-- pagestyle
 $--
 $if(pagestyle)$
@@ -643,13 +649,9 @@ $include-before$
 
 $endfor$
 $if(toc)$
-$if(toc-title)$
-\renewcommand*\contentsname{$toc-title$}
-$endif$
+\renewcommand*\contentsname{$if(toc-title)$$toc-title$$else$Содержание$endif$}
 \begin{frame}[allowframebreaks]
-$if(toc-title)$
-  \frametitle{$toc-title$}
-$endif$
+  \frametitle{$if(toc-title)$$toc-title$$else$Содержание$endif$}
   \setcounter{tocdepth}{$toc-depth$}
   \tableofcontents
 \end{frame}

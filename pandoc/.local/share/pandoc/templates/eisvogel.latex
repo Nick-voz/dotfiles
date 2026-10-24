@@ -652,6 +652,11 @@ $endif$
 \usepackage[font={stretch=1.2}, textfont={color=caption-color}, position=top, skip=4mm, labelfont=bf, singlelinecheck=false, justification=$if(caption-justification)$$caption-justification$$else$raggedright$endif$]{caption}
 \setcapindent{0em}
 
+% Russian caption labels; after babel loads so it wins over \captions<lang>
+\AtBeginDocument{%
+  \renewcommand{\figurename}{Рис.}%
+}
+
 %
 % blockquote
 %
@@ -1025,9 +1030,7 @@ $include-before$
 
 $endfor$
 $if(toc)$
-$if(toc-title)$
-\renewcommand*\contentsname{$toc-title$}
-$endif$
+\renewcommand*\contentsname{$if(toc-title)$$toc-title$$else$Содержание$endif$}
 {
 $if(colorlinks)$
 $if(toccolor)$
