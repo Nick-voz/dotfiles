@@ -117,6 +117,17 @@ selected row (`xsel`), Esc closes without copying.
   Rows are plain words (Google's translation first, then variants), fields
   1–2 left empty — the UI carries no `main`/`wikt` labels by design.
   Gotcha: the JSON value lives at `.parse.wikitext["*"]`, not `.value`.
+- Speed (warm ~1.2–1.5 s per query, cold-chain probe ~3 s once per 15 min):
+  a `translate_a` client answering non-200 is memoized in
+  `${XDG_CACHE_HOME:-~/.cache}/tv-translate/blocked-<client>` (holds the
+  epoch; skipped inside the 15-min cooldown, cleared on success, *not*
+  marked on transport errors). `wiki_variants` for a single-word query
+  starts in the background on the heuristic `tl` and runs concurrently
+  with the endpoint chain; it is only consumed when the dictionary comes
+  back empty — a direction flip re-asks it serially for the other side.
+  No `-4`: A/B'd warm, IPv4 and IPv6 paths measure the same (the early
+  0.3 s gap was just a cold AAAA cache), so forcing it buys nothing and
+  would cut off an IPv6-only network.
 - The UI shows no engine/source annotations: only the compact direction
   lands in the tv input title (`--input-header "$hdr"`, `En → Ru`), built
   from `det` (heuristic as fallback) and `tl`.
