@@ -1,1 +1,2 @@
 --ignore=^AGENTS\.md$
+--ignore=cli\.json$

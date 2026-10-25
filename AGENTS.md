@@ -19,7 +19,8 @@ Packages: `awesome`, `bash`, `clipcat`, `fish`, `fonts`, `gtk`,
 `ssh`, `systemd`, `tv`, `udiskie`, `xdg`, `xprofile`, `xremap`.
 
 `.stowrc` ignores `AGENTS.md` at package roots, so per-package instruction
-files are never stowed into `$HOME`.
+files are never stowed into `$HOME`. It also ignores `cli.json`
+(service-owned TUI settings, backup only — `opencode/AGENTS.md`).
 
 **Most specifics live in per-package `AGENTS.md` files** (one per package,
 next to its config); OpenCode loads them when you touch files inside that
