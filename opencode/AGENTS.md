@@ -3,7 +3,13 @@
 `stow opencode` links into `~/.config/opencode/`:
 
 - `opencode.json` — server config: permission rules (git status/diff/log,
-  ls/pwd are `allow`; git push/commit/add are `ask`).
+  ls/pwd are `allow`; git push/commit/add are `ask`) and the
+  `firefox-devtools` MCP server (`npx -y @mozilla/firefox-devtools-mcp@latest`
+  with `--auto-profile`).
+- Firefox MCP `--auto-profile`: persistent dedicated profile under
+  `~/.firefox-devtools-mcp/` — log in once per site (e.g. Moodle);
+  cookies and saved logins survive restarts. It is isolated from the
+  everyday profile by design; passwords are never readable by the agent.
 - `skills/beamer/` — vendored Beamer LaTeX slide skill from
   <https://github.com/Noi1r/beamer-skill> (the `beamer/` dir). OpenCode
   auto-discovers skills at `~/.config/opencode/skills/<id>/SKILL.md`.
