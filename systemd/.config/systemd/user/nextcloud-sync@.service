@@ -4,6 +4,10 @@ Description=Nextcloud sync: %i
 [Service]
 Type=oneshot
 EnvironmentFile=%h/.config/nextcloudcmd/credentials.env
+# daily nextcloudcmd logs all internal info/debug to journald natively
+# (bypasses --silent); propagator also logs every ignored file (".obsidian")
+# as a warning. Real failures still surface via unit exit code.
+Environment=QT_LOGGING_RULES=*.debug=false;*.info=false;nextcloud.sync.propagator=false
 # No network-online.target in the user manager. Exit 0 to skip rather than
 # fail the unit, so the next minute's trigger still fires.
 ExecStart=/bin/sh -c 'nmcli -t -f CONNECTIVITY general | grep -qx full || exit 0; exec /usr/bin/nextcloudcmd --non-interactive --path %i %h/%i https://cloud.nikvoz.ru/'

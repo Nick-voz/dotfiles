@@ -89,6 +89,29 @@ respawns.
   floods the journal with `Failed to start Discord` while `RestartSec`
   retries.
 
+## nextcloud-sync
+
+- Timers fire every minute — `obsidian` at :05, `Documents` at :35
+  (staggered: both write `~/.nextcloudcmd/nextcloud.cfg`) — oneshot
+  WebDAV `nextcloudcmd`; the `nmcli` connectivity gate `exit 0`s
+  silently when offline.
+- Installed client is a dev/daily build: under systemd its Qt journald
+  backend ships all internal info/debug logging to the journal (~200
+  lines/run, ~65k/boot). In a terminal the same command prints nothing,
+  and `--silent` does not gate the journald path — only
+  `QT_LOGGING_RULES=*.debug=false;*.info=false;nextcloud.sync.propagator=false`
+  in the unit silences it (verified: 0 lines/run, sync still `Finished`).
+- `Environment=` quoting trap: single/double quotes around the value are
+  passed literally into the env, and Qt then ignores the whole rules
+  string (flood returns). Write the value unquoted (no spaces needed).
+- `nextcloud.sync.propagator=false` kills the per-sync
+  `Could not complete propagation of ".obsidian" ... ignore list` warning:
+  `.obsidian` is deliberately excluded via a manual edit of
+  `/etc/Nextcloud/sync-exclude.lst` (untracked, flagged by `pacman -Qkk`),
+  and the client logs every ignored file as if it were an error.
+  Real failures still surface: unit exit code + systemd
+  `Failed with result` lines + warnings from other categories.
+
 ## Other unit notes
 
 - Electron units (`discord`, `obsidian`) need `KillSignal=SIGINT`: on
