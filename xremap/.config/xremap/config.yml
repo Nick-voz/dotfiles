@@ -44,7 +44,7 @@ keymap:
       Super-x: Ctrl-x
       Super-z: Ctrl-z
       Super-a: Ctrl-a
-      Shift-Super-z: Ctrl-Shift-z
+      Super-Shift-z: Ctrl-Shift-z
 
   - name: Disable Ctrl+C/V/X/Z copy-paste/cut/undo (all apps except kitty)
     exact_match: true
