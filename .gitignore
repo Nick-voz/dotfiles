@@ -3,3 +3,5 @@
 *.target.wants/
 # Karabiner automatic backups (written by Karabiner-Elements, machine-local)
 karabiner/.config/karabiner/automatic_backups/
+# fontconfig cache dirs written into the repo when some tool runs from here
+fontconfig/
