@@ -85,6 +85,8 @@ client.connect_signal("manage", function(c)
 	end
 end)
 
+-- Grab on title change only for the everyday browser: the MCP firefox is
+-- launched with --class firefox-mcp (opencode.json), so it never matches.
 client.connect_signal("property::name", function(c)
 	if c.class == "Firefox" or c.class == "firefox" then
 		local name = (c.name or "") .. " "

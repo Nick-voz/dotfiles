@@ -46,7 +46,10 @@ awful.rules.rules = {
 		properties = { floating = true },
 	},
 
-	{ rule = { class = "firefox" }, properties = { screen = 1, tag = "2" } },
+	{
+		rule_any = { class = { "firefox", "firefox-mcp" } },
+		properties = { screen = 1, tag = "2" },
+	},
 	{
 		rule_any = { class = { "Telegram", "discord", "Mail", "eu.betterbird.Betterbird", "zoom" } },
 		properties = { screen = 1, tag = "3" },

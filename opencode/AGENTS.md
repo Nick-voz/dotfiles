@@ -6,6 +6,12 @@
   ls/pwd are `allow`; git push/commit/add are `ask`) and the
   `firefox-devtools` MCP server (`npx -y @mozilla/firefox-devtools-mcp@latest`
   with `--auto-profile`).
+- Firefox MCP `--firefox-arg=--class --firefox-arg=firefox-mcp`: WM_CLASS
+  of the MCP window becomes `firefox-mcp`, which is how awesome keeps
+  its title changes out of the firefox focus grab (`awesome/AGENTS.md`).
+  Firefox honors this only as double-dash `--class` (X11, checked on 159).
+  Applies after an OpenCode restart; a stale old-class MCP firefox holding
+  the profile must be killed first, or the new launch fails on the lock.
 - Firefox MCP `--auto-profile`: persistent dedicated profile under
   `~/.firefox-devtools-mcp/` — log in once per site (e.g. Moodle);
   cookies and saved logins survive restarts. It is isolated from the

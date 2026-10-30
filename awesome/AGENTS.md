@@ -25,6 +25,15 @@ or "New Private Browsing Window" (about:newtab changes the title too and
 would steal focus for a page that is not there). The handover for a real
 page simply happens once its title lands.
 
+The firefox-devtools MCP browser is exempt by class: `opencode.json`
+launches it with `--firefox-arg=--class --firefox-arg=firefox-mcp`
+(`opencode/AGENTS.md`), so its WM_CLASS is `firefox-mcp`, the exact-match
+grab above never fires and its title changes are ignored. `rules.lua`
+still places it on tag 2 like the everyday firefox (the Dialog rule is
+deliberately *not* mirrored — the MCP handles JS dialogs over BiDi, no
+dialog windows appear). Note: Firefox 159 honors only the double-dash
+`--class` on X11; single-dash `-class` is silently ignored.
+
 ## LibreOffice rules
 
 At manage time every LO window is class `Soffice`; the document frame
