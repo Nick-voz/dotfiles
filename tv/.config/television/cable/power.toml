@@ -4,7 +4,7 @@ description = "Power menu: shutdown, reboot, suspend, logout"
 requirements = ["systemctl"]
 
 [source]
-command = "printf '%s\\n' 'Shutdown' 'Reboot' 'Sleep' 'Logout'"
+command = "printf '%s\\n' 'Sleep' 'Reboot' 'Logout' 'Shutdown'"
 no_sort = true
 frecency = false
 
