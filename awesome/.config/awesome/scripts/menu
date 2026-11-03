@@ -47,7 +47,7 @@ log() {
 # missing ~/.config/.env: the unit starts bash non-interactively, so neither
 # .bashrc nor config.fish get read. Without this the AI integration breaks
 # (nvim's parrot reads PERPLEXITY_API_KEY from the env, and .env is where the
-# key lives), and firefox/yazi/clipcatctl edit from the menu are just as blind.
+# key lives), and firefox/yazi/the clipboard channel's editor are just as blind.
 # Sourced rather than passed via EnvironmentFile=, which silently drops the
 # `export KEY=...` lines this file is written in (verified on systemd 262).
 if [ -r "$ENV_FILE" ]; then

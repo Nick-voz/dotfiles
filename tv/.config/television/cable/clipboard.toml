@@ -1,6 +1,6 @@
 [metadata]
 name = "clipboard"
-description = "Clipboard history via clipcatctl: promote, remove, edit"
+description = "Clipboard history via clipcatctl: promote, remove, edit, new clip"
 requirements = ["clipcatctl", "busctl", "jq", "python3", "bat"]
 
 [source]
@@ -24,6 +24,7 @@ hidden = true
 enter = "actions:promote"
 ctrl-d = ["actions:remove", "reload_source"]
 ctrl-e = ["actions:edit", "reload_source"]
+ctrl-n = "actions:new"
 
 
 [actions.promote]
@@ -39,5 +40,11 @@ mode = "fork"
 [actions.edit]
 description = "Edit entry text in $EDITOR, writes back via clipcatctl edit"
 command = "clipcatctl edit '{split:\\::0}'"
+shell = "bash"
+mode = "execute"
+
+[actions.new]
+description = "Insert an empty clip and edit it in $EDITOR (clipcatctl edit)"
+command = "\"$HOME/.config/television/scripts/edit-clip.sh\""
 shell = "bash"
 mode = "execute"

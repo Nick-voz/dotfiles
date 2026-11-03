@@ -76,6 +76,26 @@ stripped) inside `$TERMINAL` with `Path=` as cwd, everything else goes
 through `gio launch`. Both detach with `setsid` and are `execute`-mode, so
 tv gives the terminal back.
 
+## Clipboard channel
+
+`tv clipboard` keys: enter = promote, ctrl-d = remove (fork + reload),
+ctrl-e = edit the selected entry, ctrl-n = new text. The editor keys are
+`execute`: `$EDITOR` takes over the menu window and the channel ends
+with it — the window hides again on exit, no reload (ctrl-d alone is
+fork + `reload_source`).
+
+- ctrl-n runs `scripts/edit-clip.sh`: `clipcatctl insert ""`, then
+  `clipcatctl edit` on that id. Verified on clipcat 0.26: the empty
+  insert lands as the newest entry; ids are content hashes, so a second
+  `""` reuses the existing id and the before/after diff finds nothing —
+  hence the `head -1` fallback. Saving replaces the clip (its id follows
+  the content) and loads the text into the clipboard; quitting without
+  changes leaves the empty clip and an empty clipboard.
+- This is the moved logic of the old `Edit text` menu step, which queued
+  the same script into the menu window directly; the step is gone.
+- `ctrl-n` overrides the global `select_next_entry` in this channel only
+  (arrow keys still move the selection).
+
 ## Clipboard preview
 
 `tv clipboard` renders the selected entry with

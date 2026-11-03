@@ -1,10 +1,10 @@
 [metadata]
 name = "menu"
-description = "Main menu: brightness, clipboard, downloads, edit text, edit config/obsidian, translate, web search, volume, wifi, removable media"
-requirements = ["tv", "kitty", "xclip", "xsel", "clipcatctl"]
+description = "Main menu: brightness, clipboard, downloads, edit config/obsidian, translate, web search, volume, wifi, removable media"
+requirements = ["tv", "kitty", "xclip", "xsel"]
 
 [source]
-command = "printf '%s\\n' 'brightness' 'Clipboard' 'Downloads' 'Edit text' 'Edit config' 'Edit obsidian' 'Translate' 'Web search' 'Volume control' 'wifi' 'Removable media'"
+command = "printf '%s\\n' 'brightness' 'Clipboard' 'Downloads' 'Edit config' 'Edit obsidian' 'Translate' 'Web search' 'Volume control' 'wifi' 'Removable media'"
 no_sort = true
 frecency = false
 
@@ -39,8 +39,6 @@ case '{}' in
     "$MENU" --send "tv clipboard" ;;
   Downloads)
     "$MENU" --send "tv downloads" ;;
-  "Edit text")
-    "$MENU" --send "$HOME/.config/television/scripts/edit-clip.sh" ;;
   "Edit config")
     "$MENU" --send "$EDIT_FILE dirs-config" ;;
   "Edit obsidian")
