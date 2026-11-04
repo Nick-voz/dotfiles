@@ -58,9 +58,10 @@ all matching rules but runs *every* matching rule's callback — a layered
 daemon to look for. It owns `org.freedesktop.Notifications` on the session
 bus (`busctl --user list | grep Notifications` → PID of awesome) and renders
 notifications as naughty popups. Its `GetCapabilities` include `actions`, so
-libnotify action buttons work — this is why udiskie's "Browse directory" /
-"Mount" buttons and `notify-send -A` are usable. dunst is installed but not
-running and is *not* what answers on the bus.
+libnotify action buttons work — this is why `notify-send -A` is usable
+(udiskie's "Browse directory" button would be too, but its `notify` is off —
+`udiskie/AGENTS.md`). dunst is installed but not running and is *not* what
+answers on the bus.
 
 `awesome-client` is only needed for state libnotify cannot express (the menu
 window's busy/done events in `menu.lua`).

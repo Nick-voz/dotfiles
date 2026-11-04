@@ -5,10 +5,12 @@ automounts flash drives/cards/discs through udisks2. Driven by this package:
 `~/.config/udiskie/config.yml`, `scripts/browse`, `scripts/eject`, plus
 `udisksie.service` (unit in `systemd/AGENTS.md`, infra class).
 
-`automount` and `notify` are on, `tray` is off (awesome has no tray
+`automount` is on, `notify` and `tray` are off (awesome has no tray
 applets), and the only `device_config` rule is a catch-all
 `options: [noatime]` — udisks2 mounts removable media `relatime`, which
-still writes an inode access time on every read.
+still writes an inode access time on every read. With `notify` off udiskie
+is fully silent: mounts, unmounts and even automount failures (`job_failed`
+popups) produce nothing.
 
 ## Mount paths
 
@@ -34,7 +36,8 @@ machine-local symlink to that directory (created by hand, like the
 ## Browse (file_manager)
 
 `file_manager` (the target of the mount notification's "Browse directory"
-button) is passed in the unit, not in `config.yml`, because it needs `%h`
+button — unreachable while `notify` is off, `tv media` is how a volume gets
+opened) is passed in the unit, not in `config.yml`, because it needs `%h`
 and only systemd expands specifiers in `ExecStart`; it points at
 `scripts/browse`, which puts the volume into the prewarmed menu window with
 yazi (`require('menu').open(..., 'hold')`, `hold` because yazi owns the
@@ -53,8 +56,8 @@ resolve `inode/directory` through `mimeapps.list`.
    mounted/unmounted/locked/unlocked/added/removed — so `scripts/eject`
    sends its own `notify-send`, critical on failure; it has to, because
    the menu window hides itself the moment the command it runs exits, so
-   stdout is never read (udiskie's `job_failed` popup does cover failures
-   of the automount itself).
+   stdout is never read (with `notify` off, udiskie's `job_failed` popup no
+   longer covers automount failures either).
 3. The physical unplug is not udiskie's to handle: udisks2 drops the
    mount when the device disappears, and powering the drive off is only
    meaningful *before* unplugging, which is why "poweroff" lives in

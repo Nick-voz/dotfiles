@@ -3,15 +3,15 @@
 # package) as part of graphical-session.target, so it is up for the whole
 # session and dies with it. Volumes are mounted under /run/media/$USER/<label>.
 #
-# Notifications go through libnotify, whose daemon here is awesome itself:
-# awesome owns org.freedesktop.Notifications and renders them as naughty
-# popups. It advertises the "actions" capability, so udiskie's notification
-# buttons work - most usefully "Browse directory" on a mounted volume, which
-# runs file_manager below. (dunst is installed but is not running and is not
-# what answers on the bus; do not go looking for it.)
+# notify is off: udiskie mounts silently - no popups, and the "Browse
+# directory" button (file_manager below) is never shown; a volume is opened
+# via `tv media`. If re-enabled: notifications go through libnotify, whose
+# daemon here is awesome itself (owns org.freedesktop.Notifications, renders
+# naughty popups, advertises "actions" so buttons work; dunst is installed
+# but not running and is not what answers on the bus).
 program_options:
   automount: true
-  notify: true
+  notify: false
   tray: false
   # file_manager (the target of the notification's "Browse directory" button)
   # is passed in udiskie.service, for the same reason it cannot be written
