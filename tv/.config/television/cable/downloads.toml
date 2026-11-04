@@ -50,7 +50,7 @@ shell = "bash"
 mode = "execute"
 
 [actions.clear_all]
-description = "Delete everything in ~/Downloads (hidden partials included) after confirmation"
+description = "Delete everything in ~/Downloads (hidden partials included), no confirmation"
 command = "$HOME/.config/television/scripts/downloads-clear.sh"
 shell = "bash"
 mode = "execute"

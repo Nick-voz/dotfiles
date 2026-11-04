@@ -275,10 +275,9 @@ path outside `$HOME/Downloads/`, so it can never touch anything.
   terminal back — the handoff media.toml uses for `yazi '{}'`), so
   delete → refreshed list → delete makes a cleanup session; the
   refreshed list is the feedback, plus a small notify-send.
-- `clear_all` prompts `[y/N]` with the count of first-level entries
-  **including** the hidden partials it also removes; "y" empties the
-  dir and closes the menu window (nothing left to browse), anything
-  else reopens the list.
+- `clear_all` deletes without confirming: it empties the first-level
+  entries **including** the hidden partials, notifies the count and
+  closes the menu window (nothing left to browse).
 - Move targets come from a nested `tv dirs-favorites` in the same
   window — its child dirs *are* the intended targets, the prefixes
   themselves are deliberately not offered (Esc there = exit 0 with
