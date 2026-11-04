@@ -16,8 +16,12 @@
   `~/.firefox-devtools-mcp/` — log in once per site (e.g. Moodle);
   cookies and saved logins survive restarts. It is isolated from the
   everyday profile by design; passwords are never readable by the agent.
-- `AGENTS.md` — global instructions (subagent-delegation rules); OpenCode
-  loads it into every session everywhere, watches it, applies edits live.
+- `AGENTS.md` — global instructions: subagent-delegation rules and the
+  verified tool inventory (topdf/pandoc+eisvogel, poppler/qpdf/gs,
+  silicon, ImageMagick/GIMP/dot, LibreOffice headless, archive and
+  terminal utils) — inlined, not referenced, so sessions need no
+  project files to know the tools; OpenCode loads it into every session
+  everywhere, watches it, applies edits live.
   Not ignored by `.stowrc` — its pattern is anchored to the package root,
   so only `opencode/AGENTS.md` itself stays unstowed.
 - `skills/beamer/` — vendored Beamer LaTeX slide skill from
