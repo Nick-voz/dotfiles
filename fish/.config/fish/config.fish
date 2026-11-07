@@ -73,3 +73,7 @@ function frp
 end
 
 tv init fish | source
+
+if test (uname) = Darwin
+    eval (/opt/homebrew/bin/brew shellenv fish)
+end
