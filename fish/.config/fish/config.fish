@@ -4,7 +4,6 @@ source ~/.config/.env
 alias vim="nvim"
 alias venv="source .venv/bin/activate.fish"
 alias fdate='date +"%d.%m.%Y"'
-alias update="brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup"
 
 if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
@@ -76,4 +75,15 @@ tv init fish | source
 
 if test (uname) = Darwin
     eval (/opt/homebrew/bin/brew shellenv fish)
+    # Never run brew itself under sudo: the prefix is user-owned and
+    # root would leave files that break the next run. The only real
+    # stop is the sudo ticket pkg-casks ask for: authenticate up
+    # front and export HOMEBREW_SUDO_CHECKED so brew skips its
+    # startup `sudo --reset-timestamp` and reuses the ticket.
+    # Nothing else in the chain prompts unless HOMEBREW_ASK is set.
+    function update
+        sudo -v; or return 1
+        set -lx HOMEBREW_SUDO_CHECKED 1
+        brew update && brew upgrade && brew upgrade --cask --greedy && brew cleanup
+    end
 end
