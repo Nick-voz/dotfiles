@@ -9,8 +9,12 @@ Shared (symlinked into every vault's `.obsidian`): `app.json`,
 `appearance.json`, `backlink.json`, community/core plugins lists,
 `daily-notes.json`, `hotkeys.json`, `note-composer.json`,
 `page-preview.json`, `templates.json`, `zk-prefixer.json`, `plugins/`
-(incl. `data.json` — vault skeletons are identical, so paths resolve in
-every vault), `snippets/`, `themes/`.
+(one symlink per plugin; `data.json` shared — vault skeletons are
+identical, so paths resolve in every vault), `snippets/`, `themes/`.
+
+`PLUGINS_LOCAL` in link.sh (currently `obsidian-quiet-outline`) gets a
+real dir with per-file links; its `markdown-states*` stay per-vault —
+never let two vaults share mutable per-file state.
 
 Local per vault (never shared): `workspace.json`, `bookmarks.json`,
 `graph.json`, `types.json`, caches.
