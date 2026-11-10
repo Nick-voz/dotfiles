@@ -1,0 +1,7 @@
+.markdown-embed {
+border-left-width: 0px;
+} 
+
+.markdown-embed h1 {
+display: none;
+}

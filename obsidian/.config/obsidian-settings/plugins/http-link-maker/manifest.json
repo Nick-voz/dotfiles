@@ -1,0 +1,14 @@
+{
+	"id": "http-link-maker",
+	"name": "HTTP Link Maker",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Copies an HTTP link that will redirect to your vault but will be recognized and work across browsers and programs",
+	"author": "Kenneth Christensen",
+	"authorUrl": "https://kennethchristensen.me",
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://coff.ee/kennethac",
+		"GitHub Sponsors": "https://github.com/sponsors/kennethac"
+	},
+	"isDesktopOnly": false
+}

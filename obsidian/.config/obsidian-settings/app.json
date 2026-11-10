@@ -1,0 +1,32 @@
+{
+  "livePreview": false,
+  "readableLineLength": true,
+  "vimMode": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "base",
+  "pdfExportSettings": {
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 49
+  },
+  "showLineNumber": false,
+  "spellcheck": false,
+  "attachmentFolderPath": "attachments",
+  "newLinkFormat": "relative",
+  "alwaysUpdateLinks": true,
+  "useMarkdownLinks": false,
+  "spellcheckDictionary": [
+    "Шифтер-длиннозуб",
+    "Мужиг",
+    "ур",
+    "ур",
+    "ур",
+    "Глефа",
+    "есче",
+    "Тарран",
+    "глефа",
+    "одногодкой"
+  ],
+  "showUnsupportedFiles": true
+}

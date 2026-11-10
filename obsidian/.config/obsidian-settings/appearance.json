@@ -1,0 +1,18 @@
+{
+  "accentColor": "#0072a3",
+  "baseFontSize": 22,
+  "theme": "obsidian",
+  "cssTheme": "Catppuccin",
+  "translucency": true,
+  "enabledCssSnippets": [
+    "dashboard",
+    "hide-embed-headers",
+    "hide-properties",
+    "hide-inline-title"
+  ],
+  "baseFontSizeAction": true,
+  "interfaceFontFamily": "JetBrains Mono",
+  "textFontFamily": "JetBrains Mono",
+  "monospaceFontFamily": "JetBrains Mono",
+  "showRibbon": false
+}

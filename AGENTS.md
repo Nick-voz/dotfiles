@@ -15,8 +15,8 @@ This symlinks `./<package>/.config/<app>/...` → `~/.config/<app>/...`.
 Example: `stow nvim` links `nvim/.config/nvim/` → `~/.config/nvim/`.
 
 Packages: `awesome`, `bash`, `clipcat`, `fish`, `fonts`, `gtk`,
-`karabiner`, `kitty`, `nvim`, `opencode`, `pandoc`, `picom`, `scripts`,
-`ssh`, `systemd`, `tv`, `udiskie`, `xdg`, `xprofile`, `xremap`.
+`karabiner`, `kitty`, `nvim`, `obsidian`, `opencode`, `pandoc`, `picom`,
+`scripts`, `ssh`, `systemd`, `tv`, `udiskie`, `xdg`, `xprofile`, `xremap`.
 
 `.stowrc` ignores `AGENTS.md` at package roots, so per-package instruction
 files are never stowed into `$HOME`. It also ignores `cli.json`

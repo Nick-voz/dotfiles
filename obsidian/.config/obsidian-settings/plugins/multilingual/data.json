@@ -1,0 +1,17 @@
+{
+  "targetLanguages": [
+    "ru",
+    "en"
+  ],
+  "autoTranslate": true,
+  "ignoreDateFormat": "",
+  "ignoreRegex": "",
+  "ignorePath": "",
+  "addOriginalName": true,
+  "translationService": "Google Translate",
+  "apiKeys": {
+    "Google Translate": "",
+    "DeepL": ""
+  },
+  "setupComplete": false
+}
