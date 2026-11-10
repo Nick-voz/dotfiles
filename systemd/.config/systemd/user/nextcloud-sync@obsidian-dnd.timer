@@ -2,7 +2,9 @@
 Description=Nextcloud sync timer: obsidian-dnd
 
 [Timer]
-OnCalendar=*-*-* *:*:35
+# Staggered off obsidian (:05) and Documents (:35); runs are additionally
+# serialized by flock in nextcloud-sync@.service.
+OnCalendar=*-*-* *:*:25
 AccuracySec=1s
 Unit=nextcloud-sync@obsidian-dnd.service
 

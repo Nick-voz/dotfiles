@@ -91,10 +91,14 @@ respawns.
 
 ## nextcloud-sync
 
-- Timers fire every minute — `obsidian` at :05, `Documents` at :35
-  (staggered: both write `~/.nextcloudcmd/nextcloud.cfg`) — oneshot
-  WebDAV `nextcloudcmd`; the `nmcli` connectivity gate `exit 0`s
-  silently when offline.
+- Timers fire every minute — `obsidian` at :05, `obsidian-dnd` at :25,
+  `Documents` at :35 (staggered: all share the one client account store
+  `~/.config/Nextcloud/nextcloud.cfg`, touched during sync runs) — oneshot
+  WebDAV `nextcloudcmd`; the `nmcli` connectivity gate `exit 0`s silently
+  when offline. Runs are additionally serialized by an exclusive `flock` on
+  `%t/nextcloud-sync.lock` in `nextcloud-sync@.service`: a second concurrent
+  trigger exits 0 (skip) instead of racing the shared cfg, and retries next
+  minute.
 - Installed client is a dev/daily build: under systemd its Qt journald
   backend ships all internal info/debug logging to the journal (~200
   lines/run, ~65k/boot). In a terminal the same command prints nothing,
