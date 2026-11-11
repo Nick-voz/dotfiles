@@ -75,12 +75,15 @@ tv init fish | source
 
 if test (uname) = Darwin
     eval (/opt/homebrew/bin/brew shellenv fish)
+    # Homebrew 7 ships "ask mode" on by default: brew install/upgrade
+    # prints the plan and prompts y/N. This turns the default off; an
+    # explicit --ask still prompts.
+    set -gx HOMEBREW_NO_ASK 1
     # Never run brew itself under sudo: the prefix is user-owned and
     # root would leave files that break the next run. The only real
     # stop is the sudo ticket pkg-casks ask for: authenticate up
     # front and export HOMEBREW_SUDO_CHECKED so brew skips its
     # startup `sudo --reset-timestamp` and reuses the ticket.
-    # Nothing else in the chain prompts unless HOMEBREW_ASK is set.
     function update
         sudo -v; or return 1
         set -lx HOMEBREW_SUDO_CHECKED 1
