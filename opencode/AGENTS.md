@@ -30,6 +30,12 @@
 
 ## cli.json — TUI settings, tracked but never stowed
 
+- `keybinds.prompt.paste` = `super+v`: OpenCode then reads the system
+  clipboard itself (text or image → attachment) and `ctrl+v` is dead,
+  matching the machine-wide "win+v pastes, ctrl+v never does" rule
+  (`xremap`). On a text clipboard kitty's own paste still supplies the
+  text; the image-only case is routed to this keybind by
+  `scripts/smart-paste` (`kitty/AGENTS.md`).
 - The live file is service-owned: the running service rewrites it on
   settings changes and replaces any symlink with a regular file.
 - `.stowrc`'s `--ignore=cli\.json$` keeps it unlinked; the repo copy is

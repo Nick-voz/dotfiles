@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# usage: smart-paste    super+v: paste clipboard text; if the clipboard holds only an
+# image, send the super+v key event on to the app so it can paste the image itself.
+set -u -o pipefail
+
+# OpenCode (and similar TUIs) read the clipboard themselves on super+v and can
+# attach images, but kitty's map normally swallows the key; kitty's own paste
+# is text-only, so an image-only clipboard would arrive as nothing.
+targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null) || exit 0
+
+if [[ $targets == *image/* && $targets != *text/plain* ]]; then
+    exec kitten @ send-text '\e[118;9u'    # super+v in the kitty keyboard protocol (CSI-u)
+fi
+
+exec kitten @ action paste_from_clipboard

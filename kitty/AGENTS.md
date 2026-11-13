@@ -38,3 +38,21 @@ The ten chords shadow the built-in `first_window`…`tenth_window` defaults
 `rc.lua`/`xremap` binding uses ctrl+shift+digit. kitty auto-reloads
 `kitty.conf` on change, so the maps are live in already-running instances
 without a restart.
+
+## super+v → smart-paste
+
+`map super+v remote_control_script scripts/smart-paste`.
+
+- Clipboard has text (or nothing) → the script runs `kitten @ action
+  paste_from_clipboard` — the old static map, unchanged for shells,
+  editors and the menu/input prompts.
+- Image-only clipboard → it sends the raw `super+v` key event
+  (`\e[118;9u`, CSI-u encoding of the kitty keyboard protocol) instead.
+  A terminal can only paste text, so an image in the clipboard would
+  otherwise arrive as nothing; apps that read the clipboard themselves
+  react to the key — OpenCode binds `prompt.paste` to `super+v` and
+  attaches the image (`opencode/AGENTS.md`). Apps that don't parse
+  CSI-u swallow the escape silently.
+- Same spawn/env mechanics as move-tab-to; a plain shell has no
+  `KITTY_LISTEN_ON`, so the script can only be exercised by pressing
+  the key for real.
