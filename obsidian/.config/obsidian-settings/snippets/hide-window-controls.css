@@ -1,0 +1,41 @@
+/* Chrome-free window: titlebar controls, tab/sidebar buttons, view-header actions.
+   Reload Obsidian (Ctrl+R) after editing. */
+
+/* Window controls (minimize/maximize/close) in the titlebar */
+.titlebar-button-container.mod-right {
+  display: none !important;
+}
+
+/* Tab-list chevron in the sidebar tab header */
+.workspace-tab-header-tab-list {
+  display: none !important;
+}
+
+/* Sidebar toggle buttons, left and right */
+.sidebar-toggle-button {
+  display: none !important;
+}
+
+/* New tab (+) buttons in tab headers */
+.workspace-tab-header-new-tab {
+  display: none !important;
+}
+
+/* Close tab (x) buttons */
+.workspace-tab-header-inner-close-button {
+  display: none !important;
+}
+
+/* Back / forward history arrows in the view header */
+.view-header-nav-buttons {
+  display: none !important;
+}
+
+/* Reading-mode toggle and "more options" (...) in the view header.
+   The mode button swaps its icon: book-open in edit mode, edit-3 in read mode. */
+.view-actions .view-action:has(svg.lucide-book-open),
+.view-actions .view-action:has(svg.lucide-edit-3),
+.view-actions .view-action:has(svg.lucide-pen-line),
+.view-actions .view-action:has(svg.lucide-more-vertical) {
+  display: none !important;
+}

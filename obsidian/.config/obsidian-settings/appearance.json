@@ -8,7 +8,8 @@
     "dashboard",
     "hide-embed-headers",
     "hide-properties",
-    "hide-inline-title"
+    "hide-inline-title",
+    "hide-window-controls"
   ],
   "baseFontSizeAction": true,
   "interfaceFontFamily": "JetBrains Mono",
