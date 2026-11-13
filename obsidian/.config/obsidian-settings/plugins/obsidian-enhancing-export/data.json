@@ -64,7 +64,12 @@
   ],
   "defaultExportDirectoryMode": "Auto",
   "openExportedFile": false,
-  "env": {},
+  "env": {
+    "linux": {
+      "LANG": "en_US.UTF-8",
+      "LC_ALL": "en_US.UTF-8"
+    }
+  },
   "showExportProgressBar": true,
   "customDefaultExportDirectory": {
     "darwin": "/Users/nikitavozisow/Downloads"
