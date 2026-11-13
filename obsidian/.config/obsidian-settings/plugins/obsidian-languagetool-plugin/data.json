@@ -3,7 +3,7 @@
   "urlMode": "standard",
   "showRibbonIcon": false,
   "glassBg": true,
-  "shouldAutoCheck": false,
+  "shouldAutoCheck": true,
   "autoCheckDelay": 3000,
   "pickyMode": true,
   "apiKeyStorage": "secret"
