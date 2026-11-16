@@ -4,6 +4,44 @@
         {
             "complex_modifications": {
                 "rules": [
+                {
+                    "description": "Screenshots: Cmd+S whole, Cmd+Shift+S selection (Linux Super+S parity)",
+                    "manipulators": [
+                        {
+                            "from": {
+                                "key_code": "s",
+                                "modifiers": {
+                                    "mandatory": [
+                                        "command",
+                                        "shift"
+                                    ]
+                                }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "$HOME/.local/bin/screenshot -s"
+                                }
+                            ],
+                            "type": "basic"
+                        },
+                        {
+                            "from": {
+                                "key_code": "s",
+                                "modifiers": {
+                                    "mandatory": [
+                                        "command"
+                                    ]
+                                }
+                            },
+                            "to": [
+                                {
+                                    "shell_command": "$HOME/.local/bin/screenshot"
+                                }
+                            ],
+                            "type": "basic"
+                        }
+                    ]
+                },
                     {
                         "description": "Control + Shift + Option + Command + 0 -> switch to English layout",
                         "manipulators": [

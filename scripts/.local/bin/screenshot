@@ -1,0 +1,22 @@
+#!/bin/sh
+# screenshot [-s] — timestamped PNG in ~/Documents/screenshots + clipboard.
+# On the mac this is what the Karabiner Cmd+S / Cmd+Shift+S rules invoke;
+# the Linux branch mirrors the fish scrot alias, whose behavior is copied.
+dir="$HOME/Documents/screenshots"
+mkdir -p "$dir"
+f="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"
+if [ "$(uname)" = Darwin ]; then
+    if [ "$1" = "-s" ]; then
+        screencapture -i "$f" || exit 0 # Esc cancel: no file written
+    else
+        screencapture "$f" # no -x: keep the native shutter sound
+    fi
+    osascript -e "set the clipboard to (read (POSIX file \"$f\") as «class PNGf»)"
+else
+    if [ "$1" = "-s" ]; then
+        scrot -s "$f"
+    else
+        scrot "$f"
+    fi
+    clipcatctl load -k clipboard -m image/png -f "$f"
+fi

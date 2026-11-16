@@ -5,9 +5,10 @@ fish with the `pure` prompt, `fisher` plugin manager, `eza` for ls. Bash
 
 - `config.fish` sources `~/.config/.env` (untracked secrets, see the root
   `AGENTS.md`).
-- On Linux `config.fish` prepends `~/.local/bin` to PATH via plain
-  `set -gx` — never `fish_add_path`, whose universal `fish_user_paths` lands
-  in the tracked `fish_variables` and would leak Linux paths into the mac.
+- `config.fish` prepends `~/.local/bin` (stow package `scripts` to both
+  Linux and the mac) to PATH via plain `set -gx` — never `fish_add_path`,
+  whose universal `fish_user_paths` lands in the tracked `fish_variables`
+  and would leak machine-specific PATH order into the other shell.
   Helper scripts: package `scripts`.
 - `update`: Linux → `sudo pacman -Syu` (the identical vendor alias in
   `cachyos-config.fish` is overridden by `config.fish`, vendor file left

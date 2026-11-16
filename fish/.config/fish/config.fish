@@ -13,7 +13,7 @@ if test (uname) = Linux
     alias foxmarks="foxmarks -f ~/.config/mozilla/firefox/"
     # Custom scripts (stow package `scripts`). Plain set -gx, not
     # fish_add_path: universal state in the tracked fish_variables is
-    # shared with the mac, where this PATH order is wrong.
+    # shared between the Linux and mac shells.
     contains ~/.local/bin $PATH; or set -gx PATH ~/.local/bin $PATH
 end
 export MANPAGER="nvim +Man! -c 'set nospell'"
@@ -75,6 +75,9 @@ tv init fish | source
 
 if test (uname) = Darwin
     eval (/opt/homebrew/bin/brew shellenv fish)
+    # Custom scripts (stow package `scripts`): topdf and screenshot
+    # live here on the mac too. Same plain set -gx rationale as Linux.
+    contains ~/.local/bin $PATH; or set -gx PATH ~/.local/bin $PATH
     # Homebrew 7 ships "ask mode" on by default: brew install/upgrade
     # prints the plan and prompts y/N. This turns the default off; an
     # explicit --ask still prompts.
