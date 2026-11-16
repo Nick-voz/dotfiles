@@ -1,7 +1,8 @@
 #!/bin/sh
 # screenshot [-s] — timestamped PNG in ~/Documents/screenshots + clipboard.
-# On the mac this is what the Karabiner Cmd+S / Cmd+Shift+S rules invoke;
-# the Linux branch mirrors the fish scrot alias, whose behavior is copied.
+# On the mac this is what the Karabiner Ctrl+S / Ctrl+Shift+S rules invoke
+# (Super-positioned key on the ⌘⇄⌃-swapped external keyboard); the Linux
+# branch mirrors the fish scrot alias, whose behavior is copied.
 dir="$HOME/Documents/screenshots"
 mkdir -p "$dir"
 f="$dir/$(date +%Y-%m-%d_%H-%M-%S).png"

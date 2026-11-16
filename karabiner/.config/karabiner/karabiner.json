@@ -5,14 +5,14 @@
             "complex_modifications": {
                 "rules": [
                 {
-                    "description": "Screenshots: Cmd+S whole, Cmd+Shift+S selection (Linux Super+S parity)",
+                    "description": "Screenshots: Ctrl+S whole, Ctrl+Shift+S selection (Linux Super+S parity)",
                     "manipulators": [
                         {
                             "from": {
                                 "key_code": "s",
                                 "modifiers": {
                                     "mandatory": [
-                                        "command",
+                                        "control",
                                         "shift"
                                     ]
                                 }
@@ -29,7 +29,7 @@
                                 "key_code": "s",
                                 "modifiers": {
                                     "mandatory": [
-                                        "command"
+                                        "control"
                                     ]
                                 }
                             },
