@@ -50,9 +50,18 @@ without a restart.
   (`\e[118;9u`, CSI-u encoding of the kitty keyboard protocol) instead.
   A terminal can only paste text, so an image in the clipboard would
   otherwise arrive as nothing; apps that read the clipboard themselves
-  react to the key — OpenCode binds `prompt.paste` to `super+v` and
-  attaches the image (`opencode/AGENTS.md`). Apps that don't parse
-  CSI-u swallow the escape silently.
+  react to the key — OpenCode binds `prompt.paste` to `super+v` (and
+  `ctrl+v` on macOS) and attaches the image (`opencode/AGENTS.md`).
+  Apps that don't parse CSI-u swallow the escape silently.
+- Clipboard sniffing is per-platform: `xclip` TARGETS on X11; on macOS
+  a cached Swift helper (`NSPasteboard.canReadObject`, exit 0 =
+  image-only) at `~/.cache/kitty-smart-paste/pbtype`, compiled by the
+  script on first use (~40s once) via swiftc — ~15ms per paste after.
+  The fallback there is `osascript clipboard info`, which costs ~1s
+  and made every image paste feel slow. No xclip existed on the Mac,
+  so before this branch the map exited 0 and pasted nothing at all.
+- Mixed clips (text + image) and Finder file copies (`furl`,
+  `text/uri-list`) paste as text on both platforms.
 - Same spawn/env mechanics as move-tab-to; a plain shell has no
   `KITTY_LISTEN_ON`, so the script can only be exercised by pressing
   the key for real.

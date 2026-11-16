@@ -6,10 +6,43 @@ set -u -o pipefail
 # OpenCode (and similar TUIs) read the clipboard themselves on super+v and can
 # attach images, but kitty's map normally swallows the key; kitty's own paste
 # is text-only, so an image-only clipboard would arrive as nothing.
-targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null) || exit 0
+send_key() { exec kitten @ send-text '\e[118;9u'; }   # super+v, kitty-keyboard CSI-u
 
-if [[ $targets == *image/* && $targets != *text/plain* ]]; then
-    exec kitten @ send-text '\e[118;9u'    # super+v in the kitty keyboard protocol (CSI-u)
+if [[ $(uname) == Darwin ]]; then
+    # osascript costs ~1s to enumerate the pasteboard — use a tiny cached Swift
+    # helper instead (~50ms), compiled on first use into the user cache dir.
+    cache="${XDG_CACHE_HOME:-$HOME/.cache}/kitty-smart-paste"
+    helper="$cache/pbtype"
+    if [[ ! -x $helper ]] && command -v swiftc >/dev/null; then
+        mkdir -p "$cache"
+        cat >"$cache/pbtype.swift" <<'SWIFT'
+import AppKit
+let pb = NSPasteboard.general
+let img = pb.canReadObject(forClasses: [NSImage.self, NSBitmapImageRep.self], options: nil)
+let txt = pb.canReadObject(forClasses: [NSString.self], options: nil)
+exit(img && !txt ? 0 : 1)
+SWIFT
+        if swiftc -O -o "$helper.tmp" "$cache/pbtype.swift" 2>/dev/null; then
+            mv -f "$helper.tmp" "$helper"
+        else
+            rm -f "$helper.tmp"
+        fi
+    fi
+    if [[ -x $helper ]]; then
+        "$helper" && send_key
+    else
+        # no swiftc: correct but slow fallback; furl (Finder file copy) counts as text
+        clip=$(osascript -e 'clipboard info' 2>/dev/null) || clip=""
+        if [[ $clip == *PNGf* || $clip == *TIFF* || $clip == *JPEG* || $clip == *jp2* || $clip == *AVIF* ]] &&
+           [[ $clip != *utf8* && $clip != *Unicode* && $clip != *furl* ]]; then
+            send_key
+        fi
+    fi
+else
+    targets=$(xclip -selection clipboard -t TARGETS -o 2>/dev/null) || exit 0
+    if [[ $targets == *image/* && $targets != *text/plain* ]]; then
+        send_key
+    fi
 fi
 
 exec kitten @ action paste_from_clipboard
