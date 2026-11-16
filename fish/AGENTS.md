@@ -19,8 +19,9 @@ fish with the `pure` prompt, `fisher` plugin manager, `eza` for ls. Bash
   never run under sudo — prefix is user-owned, root-owned files would
   break later runs. Homebrew 7 enables "ask mode" by default (y/N before
   installs/upgrades); `config.fish` exports `HOMEBREW_NO_ASK=1`, so no y/N
-  prompts exist in the chain (explicit `--ask` still prompts). Enabling
-  Touch ID for sudo in System Settings
+  prompts exist in the chain (explicit `--ask` still prompts). Exported
+  `HOMEBREW_NO_ENV_HINTS=1` silences the post-command "Hide these
+  hints" notes. Enabling Touch ID for sudo in System Settings
   turns any remaining prompt into a fingerprint scan.
 - Fish never sources `.profile`, so XDG defaults get `set -q` guards via
   `conf.d/xdg.fish` (see `xdg/AGENTS.md`).

@@ -79,6 +79,9 @@ if test (uname) = Darwin
     # prints the plan and prompts y/N. This turns the default off; an
     # explicit --ask still prompts.
     set -gx HOMEBREW_NO_ASK 1
+    # Silence the "HOMEBREW_* isn't set to..." hints brew prints after
+    # commands (e.g. the NO_ENV_HINTS hint itself).
+    set -gx HOMEBREW_NO_ENV_HINTS 1
     # Never run brew itself under sudo: the prefix is user-owned and
     # root would leave files that break the next run. The only real
     # stop is the sudo ticket pkg-casks ask for: authenticate up
