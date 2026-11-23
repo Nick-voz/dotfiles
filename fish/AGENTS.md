@@ -24,6 +24,10 @@ fish with the `pure` prompt, `fisher` plugin manager, `eza` for ls. Bash
   `HOMEBREW_NO_ENV_HINTS=1` silences the post-command "Hide these
   hints" notes. Enabling Touch ID for sudo in System Settings
   turns any remaining prompt into a fingerprint scan.
+- `tv power` → Update runs the alias in a fresh plain kitty window:
+  `fish -C update` (config read, prompt stays afterwards) through
+  `tv/.config/television/scripts/update-window.sh` — mechanics in
+  `tv/AGENTS.md`.
 - Fish never sources `.profile`, so XDG defaults get `set -q` guards via
   `conf.d/xdg.fish` (see `xdg/AGENTS.md`).
 - The `logout` alias stops `graphical-login.target`, then runs

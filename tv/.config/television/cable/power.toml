@@ -1,10 +1,10 @@
 [metadata]
 name = "power"
-description = "Power menu: shutdown, reboot, suspend, logout"
+description = "Power menu: update, shutdown, reboot, suspend, logout"
 requirements = ["systemctl"]
 
 [source]
-command = "printf '%s\\n' 'Sleep' 'Reboot' 'Logout' 'Shutdown'"
+command = "printf '%s\\n' 'Sleep' 'Reboot' 'Update' 'Logout' 'Shutdown'"
 no_sort = true
 frecency = false
 
@@ -21,6 +21,7 @@ hidden = true
 description = "Run selected power action"
 command = '''
 case '{}' in
+  Update) "$HOME/.config/television/scripts/update-window.sh" ;;
   Shutdown) systemctl poweroff ;;
   Reboot) systemctl reboot ;;
   Sleep) systemctl suspend ;;

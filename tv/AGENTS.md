@@ -76,6 +76,25 @@ stripped) inside `$TERMINAL` with `Path=` as cwd, everything else goes
 through `gio launch`. Both detach with `setsid` and are `execute`-mode, so
 tv gives the terminal back.
 
+## Power channel
+
+`tv power` lists Update first; its Enter branch runs the action in a
+*separate full terminal window*, not in the menu window:
+`scripts/update-window.sh` spawns `setsid $TERMINAL fish -C update`
+detached the way `apps-launch.sh` does (HUP trap, redirected stdio).
+
+- `fish -C`, not `-c`: the command runs *after* the config is read, so the
+  `update` alias resolves (`fish/AGENTS.md`), and fish then drops to an
+  interactive prompt — `sudo` asks for the password in that window, the
+  pacman log stays readable afterwards (no kitty `--hold` needed).
+- The `${TERMINAL:-kitty}` fallback lives in the script, never inline: a
+  second `{` anywhere in the action would kill the `{}` substitution
+  (Channel commands are templates above).
+- The window inherits `menu.service`'s cgroup (detached from the tty, not
+  from it, `awesome/AGENTS.md`), but that is only ever reaped by a restart
+  for an *abandoned busy flow* — this action returns instantly and never
+  leaves one, so the update window always survives.
+
 ## Clipboard channel
 
 `tv clipboard` keys: enter = promote, ctrl-d = remove (fork + reload),
