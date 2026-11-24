@@ -9,7 +9,7 @@ if test (uname) = Linux
     alias zapret="$HOME/Desktop/zapret/service.sh"
     alias scrot='scrot "$HOME/Documents/screenshots/%Y-%m-%d_%H-%M-%S.png" -e '\''clipcatctl load -k clipboard -m image/png -f "$f"'\'''
     alias logout="systemctl --user stop graphical-login.target; awesome-client 'awesome.quit()'"
-    alias update="sudo pacman -Syu"
+    alias update="sudo pacman -Syu --noconfirm"
     alias foxmarks="foxmarks -f ~/.config/mozilla/firefox/"
     # Custom scripts (stow package `scripts`). Plain set -gx, not
     # fish_add_path: universal state in the tracked fish_variables is

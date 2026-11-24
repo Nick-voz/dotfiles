@@ -10,9 +10,14 @@ fish with the `pure` prompt, `fisher` plugin manager, `eza` for ls. Bash
   whose universal `fish_user_paths` lands in the tracked `fish_variables`
   and would leak machine-specific PATH order into the other shell.
   Helper scripts: package `scripts`.
-- `update`: Linux → `sudo pacman -Syu` (the identical vendor alias in
-  `cachyos-config.fish` is overridden by `config.fish`, vendor file left
-  pristine). macOS → function: `sudo -v` authenticates once up front and
+- `update`: Linux → `sudo pacman -Syu --noconfirm` (the identical vendor
+  alias in `cachyos-config.fish` is overridden by `config.fish`, vendor
+  file left pristine). `--noconfirm` skips the "Proceed with
+  installation?" prompt; pacman 7.1 has no narrower flag (no
+  `--no-install-confirmation`, no `NoInstallConfirmation` in
+  `pacman.conf`), so it also auto-answers any other sync prompt — conflict
+  resolution, PGP key import. Manual `pacman -S/-R` calls stay
+  interactive. macOS → function: `sudo -v` authenticates once up front and
   exported `HOMEBREW_SUDO_CHECKED=1` makes brew skip its startup
   `sudo --reset-timestamp` (Homebrew `utils/sudo.sh`), so pkg/dmg casks
   reuse the ticket instead of prompting mid-run; if the sudo timeout
